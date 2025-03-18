@@ -7,7 +7,6 @@
 # The default output path is /output/pytorch/workload_graph or /output/pytorch/workload_runtime; 
 # the former contains graph information, while the latter contains operator runtime details.
 # Replace all print statements with the logging module, and ensure the console output format aligns with other projects. 
-# Add real-time runtime testing output for each operator (refer to Proteus for implementation). 
-# Profiling code should be placed in timer.py.
+# Add real-time runtime testing output for each operator (refer to Proteus), profiling code is placed in timer.py.
 # Rename timer.py to profiling_timer.py.
 # Move transformer to utils folder.
