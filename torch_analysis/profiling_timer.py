@@ -7,7 +7,6 @@ sys.setrecursionlimit(1500)
 # from transformers import PreTrainedModel
 from torch.cuda import Event
 
-
 class Timer():
     def __init__(self, profiling_steps: int, name: str, use_ncu=False):
         self.use_ncu = use_ncu
@@ -291,8 +290,6 @@ class Timer():
 
         self.database[name] = statistics.mean(data_list) / self.profiling_steps
         self.variance[name] = statistics.variance(data_list) / self.steps / self.profiling_steps
-
-
 
     def _get_database(self):
         return self.database

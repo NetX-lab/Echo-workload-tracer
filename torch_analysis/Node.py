@@ -1,3 +1,4 @@
+# Node -> NodeBuilder -> NodeEngineer
 class NodeBuilder():
     def __init__(self, name, op):
         self.node = Node(name, op)

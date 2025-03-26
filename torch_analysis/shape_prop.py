@@ -52,9 +52,7 @@ def extract_tensor_metadata(result : torch.Tensor) -> TensorMetadata:
             q_scale = result.q_scale()
             q_zero_point = result.q_zero_point()
 
-
-    return TensorMetadata(
-        shape, dtype, stride, memory_format, is_quantized, qscheme, q_scale, q_zero_point)
+    return TensorMetadata(shape, dtype, stride, memory_format, is_quantized, qscheme, q_scale, q_zero_point)
 
 
 class ShapeProp(torch.fx.Interpreter):
@@ -135,14 +133,9 @@ class ShapeProp(torch.fx.Interpreter):
         return super().run(*args)
 
 '''
- ShapeProp
-
 ShapeProp类继承自torch.fx.Interpreter,用于逐节点执行FX图,并记录每个节点执行结果的形状(shape)和类型(type)。
 当您调用ShapeProp(self._symbolic_traced_module).propagate(example)时,它会针对每个节点执行以下操作：
-
     1. 使用run_node方法逐节点执行图中的节点。
     2. 对于每个节点执行的结果,extract_tensor_meta函数会被调用来提取和记录张量的元数据,如形状、数据类型、步长(stride)等。这些信息被存储在节点的meta属性中。
-
-
 
 '''

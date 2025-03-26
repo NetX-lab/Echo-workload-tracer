@@ -11,14 +11,16 @@ from typename import typename
 from Node import Node
 from transformers import PreTrainedModel
 import time
-from timer import Timer, make_dot
+from profiling_timer import Timer, make_dot
 from typing import Iterator, Any
 from typing import Dict, List
 import torch.optim as optim
 import torch.autograd.profiler as torch_profiler
 from torch.fx.experimental.proxy_tensor import FakeTensor, make_fx
 import os
+import logging
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class TorchDatabase(torch.fx.Interpreter):
     """
@@ -72,18 +74,27 @@ class TorchDatabase(torch.fx.Interpreter):
 
         initial_env = None
         self.env = initial_env if initial_env else {}
-        print(f"Start fwd profiling...")
+        logging.info("Start fwd profiling...")
+        print(f"{'Operation':<30} {'Runtime (ms)':<15}")
         self._get_fp_node_time()
         torch.cuda.synchronize()
+        logging.info("torch_graph: fwd profiling completed...")
+        print("-" * 90)
 
         del self.env
-        print(f"Start bwd profiling...")
+        logging.info("Start bwd profiling...")
+        print(f"{'Operation':<30} {'Runtime (ms)':<15}")
         self._get_bp_node_time()
         torch.cuda.synchronize()
+        logging.info("torch_graph: bwd profiling completed...")
+        print("-" * 90)
         
-        print(f"Start optimizer profiling...")
+        logging.info("Start optimizer profiling...")
+        print(f"{'Operation':<30} {'Runtime (ms)':<15}")
         self._get_optimizer_node_time()
         torch.cuda.synchronize()
+        logging.info("torch_graph: fbwd profiling completed...")
+        print("-" * 90)
 
     
     def _fp_node_run(self, node: torch.fx.node.Node, *args):
@@ -113,6 +124,8 @@ class TorchDatabase(torch.fx.Interpreter):
 
         self._forward_database = self.timer._get_database()
         self._forward_variance = self.timer._get_variance()
+
+        print(f"{node.op:<30} {self._forward_database[node.name]:<25.20f}")
         
     def _get_fp_node_time(self, initial_env = None):
         self.attr = {}
@@ -127,12 +140,7 @@ class TorchDatabase(torch.fx.Interpreter):
 
     def _get_bp_node_time(self):
         self.timer._init_database()
-        # if isinstance(self.module, PreTrainedModel):
-        #     y = self.module(self.example)
-        #     if 'pooler_output' in y.__dict__:
-        #         y = y.pooler_output
-        #     else:
-        #         y = y.last_hidden_state
+
         if isinstance(self.module, PreTrainedModel):
             y = self.module(self.example)
             if isinstance(y, tuple):
@@ -149,13 +157,9 @@ class TorchDatabase(torch.fx.Interpreter):
         self._backward_database = self.timer._get_database()
         self._backward_variance = self.timer._get_variance()
 
-    # def _get_all_node_time(self):
-    #     # self.timer._init_database()
-    #     self.timer._all_profiling(self.module,self.example)
-    #     self._forward_database = self.timer._get_database()
-    #     self._forward_variance = self.timer._get_variance()
-    #     self._backward_database = {}
-    #     self._backward_variance = {}
+        # Print the backward pass runtime
+        for node_name, runtime in self._backward_database.items():
+            print(f"{node_name:<30} {runtime:<25.20f}")
 
     def _get_optimizer_node_time(self):
         self.timer._init_database()
@@ -163,6 +167,10 @@ class TorchDatabase(torch.fx.Interpreter):
         self.timer._call_optimizer(self.optimizer.step, "optimizer_step")
         self._optimizer_database = self.timer.database
         self._optimizer_variance = self.timer._get_variance()
+
+        # Print the optimizer step runtime
+        for node_name, runtime in self._optimizer_database.items():
+            print(f"{node_name:<30} {runtime:<25.20f}")
 
     def _get_overall_database(self):
         self._overall_database = {**self._forward_database, **self._backward_database, **self._optimizer_database}

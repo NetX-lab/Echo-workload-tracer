@@ -299,8 +299,6 @@ class TorchGraph:
         self._insert_tensor_obj(var) 
         BFS_list = []
 
-        # for output in self._output_list:
-            # print(output.grad_fn)
         var = self._output_list[0]
         self._record_grad_fn(var.grad_fn)
         # self._graph_dict['output'].output_nodes.append(self._get_bp_node_name(output.grad_fn))

@@ -1,3 +1,46 @@
+import json
+import torch
+import torchvision
+import sys
+sys.path.append('/root/Echo-workload-tracer/torch_analysis')
+from torch_analysis.torch_graph import TorchGraph
+import torch.optim as optim
+import argparse
+import os
+import utils.transformer
+# transformer库包model引用example
+
+def main(args):
+    args.model = "gpt2"
+
+    module = getattr(utils.transformer, args.model)().cuda()
+    example = (torch.LongTensor(args.batchsize, 512).random_() % 1000).cuda()
+    optimizer = optim.SGD(module.parameters(), lr=0.01)
+    g = TorchGraph(module, example, optimizer, 'gpt2')
+
+    output_dir = os.path.join(args.path, g.name)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    g.dump_fwd_graph(os.path.join(output_dir, 'fwd_graph2.json'))
+    print("torch_graph: 已完成mytest_fwd_graph...")
+
+    g.dump_bwd_graph(os.path.join(output_dir, 'bwd_graph2.json'))
+    print("torch_graph: 已完成mytest_bwd_graph...")
+
+    g.dump_graph(os.path.join(output_dir, 'global_graph2.json'))
+    print("torch_graph: 已完成mytest_fbwd_graph...")
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='PyTorch Synthetic Benchmark',
+                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('--model', type=str, default='resnet50',
+                    help='model to benchmark')
+    parser.add_argument('--path', type=str, default='../output/pytorch/workload_graph',
+                    help='path')
+    parser.add_argument("--batchsize", default=16, type=int)
+    args = parser.parse_args()
+    main(args)
 # import json
 # import torch
 # import torchvision
@@ -24,26 +67,6 @@
 # for node in g.get_output_json():
 #     print(node)
 # g.dump_graph(args.model + "test.json")
-
-import json
-import torch
-import torchvision
-from torch_analysis.torch_graph import TorchGraph
-import torch.optim as optim
-import argparse
-import os
-
-
-parser = argparse.ArgumentParser(description='PyTorch Synthetic Benchmark',
-                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-parser.add_argument('--model', type=str, default='resnet50',
-                    help='model to benchmark')
-parser.add_argument('--path', type=str, default='../output/pytorch/workload_graph',
-                    help='path')
-parser.add_argument("--batchsize", default=16, type=int)
-args = parser.parse_args()
-
-
 
 
 # # 自定义model workload trace example
@@ -106,27 +129,3 @@ args = parser.parse_args()
 # g.dump_graph(os.path.join(output_dir, 'global_graph2.json'))
 # print("torch_graph: 已完成mytest_fbwd_graph...")
 
-
-
-
-# transformer库包model引用example
-import transformer
-args.model="gpt2"
-
-module = getattr(transformer, args.model)().cuda()
-example = (torch.LongTensor(args.batchsize,512).random_() % 1000).cuda()
-optimizer = optim.SGD(module.parameters(), lr=0.01)
-g = TorchGraph(module, example, optimizer, 'gpt2')
-
-output_dir = os.path.join(args.path, g.name)
-if not os.path.exists(output_dir):
-    os.makedirs(output_dir)
-
-g.dump_fwd_graph(os.path.join(output_dir, 'fwd_graph2.json'))
-print("torch_graph: 已完成mytest_fwd_graph...")
-
-g.dump_bwd_graph(os.path.join(output_dir, 'bwd_graph2.json'))
-print("torch_graph: 已完成mytest_bwd_graph...")
-
-g.dump_graph(os.path.join(output_dir, 'global_graph2.json'))
-print("torch_graph: 已完成mytest_fbwd_graph...")
