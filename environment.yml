@@ -1,0 +1,6 @@
+name: echo-workload-tracer
+dependencies:
+  - python=3.9
+  - pip
+  - pip:
+      - git+https://github.com/NetX-lab/Echo-slowdown.git#egg=echo-slowdown

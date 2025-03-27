@@ -1,5 +1,4 @@
 from typing import Any
-
 import numpy as np
 import random
 import torch
@@ -13,25 +12,33 @@ __all__ = [
     "gpt2"
 ]
 
-def gpt2(sample = False,  **kwargs: Any):
+def gpt2(
+    sample = False,  **kwargs: Any
+) -> GPT2Model:
     config = GPT2Config(
         n_embd=768, n_layer=12, n_head=12
     )
     return GPT2Model(config)
 
-def gpt2_medium(sample = False,  **kwargs: Any):
+def gpt2_medium(
+    sample = False,  **kwargs: Any
+) -> GPT2Model:
     config = GPT2Config(
         n_embd=768, n_layer=12, n_head=12
     )
     return GPT2Model(config)
 
-def gpt2_large(sample = False,  **kwargs: Any):
+def gpt2_large(
+    sample = False,  **kwargs: Any
+) -> GPT2Model:
     config = GPT2Config(
         n_embd=1024, n_layer=24, n_head=16
     )
     return GPT2Model(config)
 
-def gpt2_xl(sample = False,  **kwargs: Any):
+def gpt2_xl(
+    sample = False,  **kwargs: Any
+) -> GPT2Model:
     config = GPT2Config(
         n_embd=1600, n_layer=48, n_head=25
     )

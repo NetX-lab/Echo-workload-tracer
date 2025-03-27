@@ -3,7 +3,18 @@ import torch.fx
 from torch.fx.node import Node, map_aggregate
 from typing import Any, Tuple, NamedTuple, Optional
 
-class TensorMetadata(NamedTuple):
+"""
+The ShapeProp class inherits from torch.fx.Interpreter and is used to execute an FX graph node by node,
+recording the shape and type of the result of each node.
+When you call ShapeProp(self._symbolic_traced_module).propagate(example), it performs the following operations for each node:
+    1. Execute the nodes in the graph using the run_node method.
+    2. For the result of each node execution, the extract_tensor_meta function is called to extract and record tensor metadata,
+       such as shape, data type, stride, etc. This information is stored in the meta attribute of the node.
+"""
+
+class TensorMetadata(
+    NamedTuple
+):
     # TensorMetadata is a structure containing pertinent information
     # about a tensor within a PyTorch program.
 
@@ -19,7 +30,9 @@ class TensorMetadata(NamedTuple):
     q_scale : Optional[float]
     q_zero_point : Optional[int]
 
-def extract_tensor_metadata(result : torch.Tensor) -> TensorMetadata:
+def extract_tensor_metadata(
+    result : torch.Tensor
+) -> TensorMetadata:
     """
     Extract a TensorMetadata NamedTuple describing `result`.
     """
@@ -99,12 +112,16 @@ class ShapeProp(torch.fx.Interpreter):
          module (GraphModule): The module to be executed
 
     """
-    def run_node(self, n : Node) -> Any:
+    def run_node(
+        self, n : Node
+    ) -> Any:
         result = super().run_node(n)
 
         found_tensor = False
 
-        def extract_tensor_meta(obj):
+        def extract_tensor_meta(
+            obj
+        ) -> Any:
             if isinstance(obj, torch.Tensor):
                 nonlocal found_tensor
                 found_tensor = True
@@ -119,7 +136,9 @@ class ShapeProp(torch.fx.Interpreter):
         n.meta['type'] = type(result)
         return result
 
-    def propagate(self, *args):
+    def propagate(
+        self, *args
+        ) -> Any:
         """
         Run `module` via interpretation and return the result and
         record the shape and type of each node.
@@ -131,11 +150,3 @@ class ShapeProp(torch.fx.Interpreter):
             Any: The value returned from executing the Module
         """
         return super().run(*args)
-
-'''
-ShapeProp类继承自torch.fx.Interpreter,用于逐节点执行FX图,并记录每个节点执行结果的形状(shape)和类型(type)。
-当您调用ShapeProp(self._symbolic_traced_module).propagate(example)时,它会针对每个节点执行以下操作：
-    1. 使用run_node方法逐节点执行图中的节点。
-    2. 对于每个节点执行的结果,extract_tensor_meta函数会被调用来提取和记录张量的元数据,如形状、数据类型、步长(stride)等。这些信息被存储在节点的meta属性中。
-
-'''

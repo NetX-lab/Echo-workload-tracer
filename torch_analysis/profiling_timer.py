@@ -1,14 +1,22 @@
 import time
 import sys
 import torch
-import statistics 
+import statistics
 import torch.autograd.profiler as torch_profiler
 sys.setrecursionlimit(1500)
-# from transformers import PreTrainedModel
 from torch.cuda import Event
 
-class Timer():
-    def __init__(self, profiling_steps: int, name: str, use_ncu=False):
+
+class Timer:
+    """
+    A profiling timer for measuring execution time of PyTorch operations.
+    """
+    def __init__(
+        self, profiling_steps: int, name: str, use_ncu=False
+    ):
+        """
+        Initializes the Timer with profiling parameters.
+        """
         self.use_ncu = use_ncu
         self.warming = 50
         self.steps = 5
@@ -20,11 +28,21 @@ class Timer():
         self.grad_fn_input_list = []
         self.backward_op_dict = dict()
 
-    def _init_database(self):
+    def _init_database(
+        self
+    ):
+        """
+        Resets the profiling database.
+        """
         self.database = dict()
         self.variance = dict()
 
-    def v1_bp_profiling(self):
+    def v1_bp_profiling(
+        self
+    ):
+        """
+        Performs backward pass profiling using time.perf_counter.
+        """
         for var_name, outputs in zip(self.grad_fn_list, self.grad_fn_input_list):
             name = var_name['name']
             var = var_name['var']
@@ -46,7 +64,12 @@ class Timer():
                 self.database[name] = statistics.mean(data_list) / self.profiling_steps
                 self.variance[name] = statistics.variance(data_list) / self.steps / self.profiling_steps
 
-    def _bp_profiling(self):
+    def _bp_profiling(
+        self
+    ):
+        """
+        Performs backward pass profiling using CUDA events.
+        """
         for var_name, outputs in zip(self.grad_fn_list, self.grad_fn_input_list):
             name = var_name['name']
             var = var_name['var']
@@ -71,10 +94,20 @@ class Timer():
                 self.database[name] = statistics.mean(data_list) / self.profiling_steps
                 self.variance[name] = statistics.variance(data_list) / self.steps / self.profiling_steps
 
-    def _get_bp_node_op(self, var):
+    def _get_bp_node_op(
+        self, var
+    ) -> str:
+        """
+        Retrieves the operation name for a backward pass node.
+        """
         return type(var).__name__
 
-    def v1_make_hook(self, var):
+    def v1_make_hook(
+        self, var
+    ) -> callable:
+        """
+        Creates a hook for backward pass profiling using time.perf_counter.
+        """
         def hook(inputs, outputs):
             if self._get_bp_node_op(var) not in self.backward_op_dict:
                 self.backward_op_dict[self._get_bp_node_op(var)] = 0
@@ -100,12 +133,17 @@ class Timer():
                     data_list.append((ee-ss))
                 self.database[name] = statistics.mean(data_list) / self.profiling_steps
                 self.variance[name] = statistics.variance(data_list) / self.steps / self.profiling_steps
-            # self.grad_fn_list.append({'var':var, 'name':self._get_bp_node_op(var) +str(self.backward_op_dict[self._get_bp_node_op(var)])})
-            # self.grad_fn_input_list.append(outputs)
         return hook
 
-    def _make_hook(self, var):
-        def hook(inputs, outputs):
+    def _make_hook(
+        self, var
+    ) -> callable:
+        """
+        Creates a hook for backward pass profiling using CUDA events.
+        """
+        def hook(
+            inputs, outputs
+        ) -> None:
             if self._get_bp_node_op(var) not in self.backward_op_dict:
                 self.backward_op_dict[self._get_bp_node_op(var)] = 0
             else:
@@ -139,24 +177,29 @@ class Timer():
                     torch.cuda.nvtx.range_pop()
                     print(f"finished ncu profiling for {name} during backward pass")
 
-
                 self.database[name] = statistics.mean(data_list) / self.profiling_steps
                 self.variance[name] = statistics.variance(data_list) / self.steps / self.profiling_steps
-            
         return hook
 
-    def _empty_hook(self, var):
-        def hook(inputs, outputs):
+    def _empty_hook(
+        self, var
+    ) -> callable:
+        """
+        Creates an empty hook for backward pass.
+        """
+        def hook(
+            inputs, outputs
+        ) -> None:
             pass
         return hook
 
-    def v1_call_function(self, function, node, args, kwargs):
+    def v1_call_function(
+        self, function, node, args, kwargs
+    ):
         """
-
         :param function: Interpreter.call_module
         :param node: node in symbolic_traced_module.graph.nodes
         :param args: input tensor
-        
         """
         for i in range(self.warming):
             function(node.target, args, kwargs)
@@ -179,13 +222,13 @@ class Timer():
         return function(node.target, args, kwargs)
 
 
-    def _call_function(self, function, node, args, kwargs):
+    def _call_function(
+        self, function, node, args, kwargs
+    ):
         """
-
         :param function: Interpreter.call_module
         :param node: node in symbolic_traced_module.graph.nodes
         :param args: input tensor
-        
         """
         start_event = Event(enable_timing=True)
         end_event = Event(enable_timing=True)
@@ -194,7 +237,6 @@ class Timer():
             function(node.target, args, kwargs)
         data_list = []
         torch.cuda.synchronize()
-        # torch.cuda.empty_cache()
 
         for _ in range(self.steps):
             start_event.record()
@@ -218,7 +260,12 @@ class Timer():
         return function(node.target, args, kwargs)
 
 
-    def _call_function_profile(self, function, args):
+    def _call_function_profile(
+        self, function, args
+    ):
+        """
+        Profiles a function using PyTorch's autograd profiler.
+        """
         function(args)
         with torch_profiler.profile(use_cuda=True) as prof:
             function(args)
@@ -230,7 +277,12 @@ class Timer():
                 result += e.self_cuda_time_total
                 count += 1
 
-    def v1_call_function_once(self, function, node, args, kwargs):
+    def v1_call_function_once(
+        self, function, node, args, kwargs
+    ):
+        """
+        Performs a single forward pass function call and measures execution time using time.perf_counter.
+        """
         torch.cuda.synchronize()
         ss = time.perf_counter()
         output = function(node.target, args, kwargs)
@@ -241,7 +293,12 @@ class Timer():
         self.variance[node.name] = 0
         return output
     
-    def _call_function_once(self, function, node, args, kwargs):
+    def _call_function_once(
+        self, function, node, args, kwargs
+    ):
+        """
+        Performs a single forward pass function call and measures execution time using CUDA events.
+        """
         start_event = Event(enable_timing=True)
         end_event = Event(enable_timing=True)
 
@@ -255,7 +312,12 @@ class Timer():
         self.variance[node.name] = start_event.elapsed_time(end_event) / 1
         return output
 
-    def v1_call_optimizer(self, function, name):
+    def v1_call_optimizer(
+        self, function, name
+    ):
+        """
+        Performs optimizer step profiling using time.perf_counter.
+        """
         for i in range(self.warming):
             function()
         data_list = []
@@ -271,7 +333,12 @@ class Timer():
         self.variance[name] = statistics.variance(data_list) / self.steps / self.profiling_steps
 
 
-    def _call_optimizer(self, function, name):
+    def _call_optimizer(
+        self, function, name
+    ):
+        """
+        Performs optimizer step profiling using CUDA events.
+        """
         for i in range(self.warming):
             function()
         data_list = []
@@ -291,29 +358,30 @@ class Timer():
         self.database[name] = statistics.mean(data_list) / self.profiling_steps
         self.variance[name] = statistics.variance(data_list) / self.steps / self.profiling_steps
 
-    def _get_database(self):
+    def _get_database(
+        self
+    ):
         return self.database
 
-    def _get_variance(self):
+    def _get_variance(
+        self
+    ):
         return self.variance
 
 
-def make_dot(var, params, hook):
-    """ Produces Graphviz representation of PyTorch autograd graph.
-    
-    Blue nodes are trainable Variables (weights, bias).
-    Orange node are saved tensors for the backward pass.
-    
-    Args:
-        var: output Variable
-        params: list of (name, Parameters)
+def make_dot(
+    var, params, hook
+):
     """
-    
+    Produces Graphviz representation of PyTorch autograd graph.
+    """
     param_map = {id(v): k for k, v in params}
 
     seen = set()
     
-    def add_nodes(var):
+    def add_nodes(
+        var
+    ):
         if var not in seen:
             node_id = str(id(var))
             var.register_hook(hook(var))

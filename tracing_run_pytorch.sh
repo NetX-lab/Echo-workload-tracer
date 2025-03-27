@@ -1,17 +1,17 @@
 #!/bin/bash
 
-# 设置 PATH 环境变量
+# Set the PATH environment variable
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
-# 默认参数
-FRAMEWORK="Pytorch"
+# Default parameters
+FRAMEWORK="PyTorch"
 MODE="runtime_profiling"
 MODEL="gpt2"
 PATH="output/pytorch/workload_runtime"
 BATCHSIZE=16
 NUM_REPEATS=1
 
-# 解析命令行参数
+# Parse command-line arguments
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         --framework) FRAMEWORK="$2"; shift ;;
@@ -25,18 +25,19 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
-# 获取当前执行路径
+# Get the current working directory
 CURRENT_DIR=$(pwd)
 
-# 获取当前 Python3 路径
+# Get the path to the Python3 executable
 PYTHON_PATH=$(command -v python3)
 
-# 检查当前执行路径是否在 PYTHONPATH 中，如果不在则加上
+# Check if the current working directory is in PYTHONPATH; if not, add it
 if [[ ":$PYTHONPATH:" != *":$CURRENT_DIR:"* ]]; then
     export PYTHONPATH="${PYTHONPATH:+"$PYTHONPATH:"}$CURRENT_DIR"
 fi
 
+# Define the path to the workload_tracer.py script
 WORKLOAD_TRACER_PATH="$CURRENT_DIR/workload_tracer.py"
 
-# 运行 workload_tracer.py
+# Execute workload_tracer.py with the specified parameters
 $PYTHON_PATH "$WORKLOAD_TRACER_PATH" --framework "$FRAMEWORK" --mode "$MODE" --model "$MODEL" --path "$PATH" --batchsize "$BATCHSIZE" --num_repeats "$NUM_REPEATS"

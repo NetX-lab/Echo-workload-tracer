@@ -1,5 +1,4 @@
 from typing import Any
-
 import numpy as np
 import random
 import torch
@@ -12,10 +11,17 @@ __all__ = [
     "gpt2_xl",
 ]
 
-class GPT2BenchmarkModel(torch.nn.Module):
-    """The GPT2 model for benchmarking."""
-    def __init__(self, config, num_classes=1000):
-        """Constructor.
+class GPT2BenchmarkModel(
+    torch.nn.Module
+):
+    """
+    The GPT2 model for benchmarking.
+    """
+    def __init__(
+        self, config, num_classes=1000
+    ) -> None:
+        """
+        Constructor.
         Args:
             config (GPT2Config): Configurations of GPT2 model.
             num_classes (int): The number of objects for classification.
@@ -24,8 +30,11 @@ class GPT2BenchmarkModel(torch.nn.Module):
         self._model = GPT2Model(config)
         self._linear = torch.nn.Linear(config.n_embd, num_classes)
 
-    def forward(self, input):
-        """Forward propagation function.
+    def forward(
+        self, input
+    ) -> torch.FloatTensor:
+        """
+        Forward propagation function.
         Args:
             input (torch.LongTensor): Indices of input sequence tokens in the vocabulary,
               shape (batch_size, sequence_length).
@@ -37,19 +46,34 @@ class GPT2BenchmarkModel(torch.nn.Module):
         result = self._linear(outputs[0])
         return result
 
-def gpt2_medium(sample = False,  **kwargs: Any):
+def gpt2_medium(
+    sample = False,  **kwargs: Any
+) -> GPT2BenchmarkModel:
+    """
+    Creates a GPT2 medium model for benchmarking.
+    """
     config = GPT2Config(
         n_embd=768, n_layer=12, n_head=12
     )
     return GPT2BenchmarkModel(config, **kwargs)
 
-def gpt2_large(sample = False,  **kwargs: Any):
+def gpt2_large(
+    sample = False,  **kwargs: Any
+) -> GPT2BenchmarkModel:
+    """
+    Creates a GPT2 large model for benchmarking.
+    """
     config = GPT2Config(
         n_embd=1024, n_layer=24, n_head=16
     )
     return GPT2BenchmarkModel(config, **kwargs)
 
-def gpt2_xl(sample = False,  **kwargs: Any):
+def gpt2_xl(
+    sample = False,  **kwargs: Any
+) -> GPT2BenchmarkModel:
+    """
+    Creates a GPT2 extra-large model for benchmarking.
+    """
     config = GPT2Config(
         n_embd=1600, n_layer=48, n_head=25
     )
