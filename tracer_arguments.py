@@ -23,6 +23,7 @@ def get_parser(
         help='Mode for PyTorch workload tracing'
     )
     pytorch_group.add_argument('--model', type=str, default='gpt2', help='Model to benchmark')
+    pytorch_group.add_argument('--model_source', type=str, choices=['huggingface', 'local'], default='local', help='Model source')
     pytorch_group.add_argument('--path', type=str, default='output/pytorch/workload_runtime', help='Output path')
     pytorch_group.add_argument('--batchsize', type=int, default=16, help='Batch size')
     pytorch_group.add_argument('--num_repeats', type=int, default=1, help='Number of repeats')
@@ -52,9 +53,9 @@ def filter_args(
     """
     if args.framework == 'PyTorch':
         if args.mode == 'runtime_profiling':
-            filtered_dict = {k: v for k, v in vars(args).items() if k in ['model', 'path', 'batchsize', 'num_repeats']}
+            filtered_dict = {k: v for k, v in vars(args).items() if k in ['model', 'path', 'batchsize', 'num_repeats', 'model_source']}
         else:
-            filtered_dict = {k: v for k, v in vars(args).items() if k in ['model', 'path', 'batchsize']}
+            filtered_dict = {k: v for k, v in vars(args).items() if k in ['model', 'path', 'batchsize', 'model_source']}
     elif args.framework == 'DeepSpeed':
         filtered_dict = {k: v for k, v in vars(args).items() if k.startswith('deepspeed_')}
     elif args.framework == 'Megatron-LM':

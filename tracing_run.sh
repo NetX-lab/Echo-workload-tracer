@@ -7,6 +7,7 @@ export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 FRAMEWORK="PyTorch"
 MODE="runtime_profiling"
 MODEL="gpt2"
+MODEL_SOURCE="local"
 PATH="output/pytorch/workload_runtime"
 BATCHSIZE=16
 NUM_REPEATS=1
@@ -17,6 +18,7 @@ while [[ "$#" -gt 0 ]]; do
         --framework) FRAMEWORK="$2"; shift ;;
         --mode) MODE="$2"; shift ;;
         --model) MODEL="$2"; shift ;;
+        --model_source) MODEL_SOURCE="$2"; shift ;;
         --path) PATH="$2"; shift ;;
         --batchsize) BATCHSIZE="$2"; shift ;;
         --num_repeats) NUM_REPEATS="$2"; shift ;;
@@ -40,4 +42,4 @@ fi
 WORKLOAD_TRACER_PATH="$CURRENT_DIR/workload_tracer.py"
 
 # Execute workload_tracer.py with the specified parameters
-$PYTHON_PATH "$WORKLOAD_TRACER_PATH" --framework "$FRAMEWORK" --mode "$MODE" --model "$MODEL" --path "$PATH" --batchsize "$BATCHSIZE" --num_repeats "$NUM_REPEATS"
+$PYTHON_PATH "$WORKLOAD_TRACER_PATH" --framework "$FRAMEWORK" --mode "$MODE" --model "$MODEL" --model_source "$MODEL_SOURCE" --path "$PATH" --batchsize "$BATCHSIZE" --num_repeats "$NUM_REPEATS"

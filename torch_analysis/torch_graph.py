@@ -41,6 +41,7 @@ from transformers import PreTrainedModel
 from torch.fx import symbolic_trace
 from transformers.utils.fx import symbolic_trace as transformers_symbolic_trace
 import os
+from typing import List, Optional, Dict, Any
 sys.setrecursionlimit(1500)
 
 
@@ -124,7 +125,7 @@ class TorchGraph:
 
     def _get_node_input_nodes(
         self, node: torch.fx.node.Node
-    ) -> List[str]:
+    ):
         """
         Get the input nodes of the current node.
         """
@@ -132,7 +133,7 @@ class TorchGraph:
 
     def _get_node_output_nodes(
         self, node: torch.fx.node.Node
-    ) -> List[str]:
+    ):
         """
         Get the output nodes of the current node.
         """
@@ -417,28 +418,18 @@ class TorchGraph:
         return [(Metadata.shape) if Metadata else Metadata 
                 for Metadata in self._backward_graph_dict[node]['output_meta']]
 
-   def _make_backward_hook(
-        self, node
-    ) -> Any:
-        """
-        Create a backward hook for the given node.
-        """
-        def hook(inputs, outputs):
-            if self._get_bp_node_op(node) not in self._backward_op_dict:
-                self._backward_op_dict[self._get_bp_node_op(node)] = 0
-            else:
-                self._backward_op_dict[self._get_bp_node_op(node)] += 1
-            self._backward_graph_dict[node]['name'] = \
-                self._get_bp_node_op(node) + str(self._backward_op_dict[self._get_bp_node_op(node)])
-
-            self._backward_graph_dict[node]['input_meta'] = \
-                self._get_tensor_meta(outputs)
-            self._backward_graph_dict[node]['output_meta'] = \
-                self._get_tensor_meta(inputs)
-
-            self._grad_fn_list.append(node)
-        return hook
-
+    def _make_forward_hook(
+        self
+    ):
+            def hook(
+                module, input, output
+            ):
+                try:
+                    if 'module' not in output.grad_fn.metadata:
+                        output.grad_fn.metadata['module'] = module
+                except Exception as e:
+                    print(f"An exception occurred while setting metadata: {e}")
+            return hook
 
     def _record_grad_fn(
         self, grad_fn

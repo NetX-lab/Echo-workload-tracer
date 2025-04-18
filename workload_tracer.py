@@ -14,9 +14,18 @@ from torch_analysis.torch_graph import TorchGraph
 from torch_analysis.profiling_timer import Timer
 import torch.optim as optim
 import utils.transformer
-
+from transformers import AutoModel, AutoTokenizer
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+def load_huggingface_model(
+    model_name: str
+) -> tuple:
+    """
+    Load a Hugging Face model and tokenizer.
+    """
+    model = AutoModel.from_pretrained(model_name).cuda()
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    return model, tokenizer
 
 def run_torch_database_test(
     args
@@ -26,10 +35,15 @@ def run_torch_database_test(
     """
     timer = Timer(args.num_repeats, args.model)
 
-    module = getattr(utils.transformer, args.model)().cuda()
-    example = (torch.LongTensor(args.batchsize, 512).random_() % 1000).cuda()
-    optimizer = optim.SGD(module.parameters(), lr=0.01)
-    g = TorchDatabase(module, example, args.model, timer, optimizer)
+    if args.model_source == 'huggingface':  #  Hugging Face support
+        model, tokenizer = load_huggingface_model(args.model)
+        example_input = tokenizer("Hello, world!", return_tensors="pt", padding=True, truncation=True).input_ids.cuda()
+    else:
+        model = getattr(utils.transformer, args.model)().cuda()
+        example_input = (torch.LongTensor(args.batchsize, 512).random_() % 1000).cuda()
+
+    optimizer = optim.SGD(model.parameters(), lr=0.01)
+    g = TorchDatabase(model, example_input, args.model, timer, optimizer)
 
     output_dir = os.path.join(args.path, g.name)
     if not os.path.exists(output_dir):
@@ -46,10 +60,15 @@ def run_torch_graph_test(
     """
     Runs the TorchGraph test for graph profiling.
     """
-    module = getattr(utils.transformer, args.model)().cuda()
-    example = (torch.LongTensor(args.batchsize, 512).random_() % 1000).cuda()
-    optimizer = optim.SGD(module.parameters(), lr=0.01)
-    g = TorchGraph(module, example, optimizer, args.model)
+    if args.model_source == 'huggingface':  #  Hugging Face support
+        model, tokenizer = load_huggingface_model(args.model)
+        example_input = tokenizer("Hello, world!", return_tensors="pt", padding=True, truncation=True).input_ids.cuda()
+    else:
+        model = getattr(utils.transformer, args.model)().cuda()
+        example_input = (torch.LongTensor(args.batchsize, 512).random_() % 1000).cuda()
+
+    optimizer = optim.SGD(model.parameters(), lr=0.01)
+    g = TorchGraph(model, example_input, optimizer, args.model)
 
     output_dir = os.path.join(args.path, g.name)
     if not os.path.exists(output_dir):
@@ -63,6 +82,7 @@ def run_torch_graph_test(
 
     g.dump_graph(os.path.join(output_dir, 'global_graph2.json'))
     logging.info("torch_graph: fbwd_graph completed...")
+
 
 
 if __name__ == "__main__":

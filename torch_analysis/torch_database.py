@@ -1,5 +1,5 @@
 import json
-from typing import Tuple
+from typing import List, Optional, Dict, Any, Iterator, Tuple
 import torch
 import torch.fx
 from torch.fx.node import Argument, Node, Target, map_arg, map_aggregate
@@ -12,8 +12,6 @@ from Node import Node
 from transformers import PreTrainedModel
 import time
 from profiling_timer import Timer, make_dot
-from typing import Iterator, Any
-from typing import Dict, List
 import torch.optim as optim
 import torch.autograd.profiler as torch_profiler
 from torch.fx.experimental.proxy_tensor import FakeTensor, make_fx
@@ -137,8 +135,6 @@ class TorchDatabase(
 
         self._forward_database = self.timer._get_database()
         self._forward_variance = self.timer._get_variance()
-
-        print(f"{node.op:<30} {self._forward_database[node.name]:<25.20f}")
         
     def _get_fp_node_time(
         self, initial_env = None
@@ -155,6 +151,9 @@ class TorchDatabase(
                 continue
             else:
                 self._fp_node_run(node, self.example)
+                
+        for node_name, runtime in self._forward_database.items():
+            print(f"{node_name:<30} {runtime:<25.20f}")
 
     def _get_bp_node_time(
         self
