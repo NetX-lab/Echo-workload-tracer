@@ -1,4 +1,3 @@
-#!/root/miniconda3/envs/tracer_zz/bin/python3
 import warnings
 import subprocess
 import os
@@ -7,13 +6,14 @@ import torch
 import json
 import logging
 
-sys.path.append('/root/Echo-workload-tracer/torch_analysis')
+# sys.path.append('/root/Echo-workload-tracer/torch_analysis')
 from tracer_arguments import get_parser, filter_args
 from torch_analysis.torch_database import TorchDatabase
 from torch_analysis.torch_graph import TorchGraph
 from torch_analysis.profiling_timer import Timer
 import torch.optim as optim
 import utils.transformer
+from utils.config_display import get_config_display
 from transformers import AutoModel, AutoTokenizer
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -75,13 +75,13 @@ def run_torch_graph_test(
         os.makedirs(output_dir)
 
     g.dump_fwd_graph(os.path.join(output_dir, 'fwd_graph2.json'))
-    logging.info("torch_graph: fwd_graph completed...")
+    logging.info("torch_graph: forward graph completed...")
 
     g.dump_bwd_graph(os.path.join(output_dir, 'bwd_graph2.json'))
-    logging.info("torch_graph: bwd_graph completed...")
+    logging.info("torch_graph: backward graph completed...")
 
     g.dump_graph(os.path.join(output_dir, 'global_graph2.json'))
-    logging.info("torch_graph: fbwd_graph completed...")
+    logging.info("torch_graph: global graph completed...")
 
 
 
@@ -89,6 +89,18 @@ if __name__ == "__main__":
     parser = get_parser()
     args = parser.parse_args()
     filtered_args = filter_args(args)
+    
+    # Add hardware information to args if using PyTorch
+    if args.framework == 'PyTorch' and torch.cuda.is_available():
+        setattr(args, '_cuda_available', True)
+        setattr(args, '_gpu_name', torch.cuda.get_device_name(0))
+        setattr(args, '_gpu_memory', f"{torch.cuda.get_device_properties(0).total_memory / 1024**3:.2f}")
+    else:
+        setattr(args, '_cuda_available', False)
+    
+    # Get the appropriate config display instance and display configuration
+    config_display = get_config_display(args)
+    config_display.display()
 
     if args.framework == 'PyTorch':
         if args.mode == 'runtime_profiling':

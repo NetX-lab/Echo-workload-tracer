@@ -6,12 +6,12 @@ from torch.fx.node import Argument, Node, Target, map_arg, map_aggregate
 from torch.fx import symbolic_trace, Interpreter
 from torch.optim.optimizer import Optimizer
 from transformers.utils.fx import symbolic_trace as transformers_symbolic_trace
-from shape_prop import ShapeProp, TensorMetadata
-from typename import typename
-from Node import Node
+from .shape_prop import ShapeProp, TensorMetadata
+from .typename import typename
+from . import Node
 from transformers import PreTrainedModel
 import time
-from profiling_timer import Timer, make_dot
+from .profiling_timer import Timer, make_dot
 import torch.optim as optim
 import torch.autograd.profiler as torch_profiler
 from torch.fx.experimental.proxy_tensor import FakeTensor, make_fx

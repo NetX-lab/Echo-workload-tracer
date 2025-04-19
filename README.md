@@ -4,21 +4,20 @@ This repository contains the workload tracer part of [Echo: Simulating Distribut
 
 ## Project Overview
 
-The Echo Workload Tracer focuses on tracing and profiling the workload of different frameworks (PyTorch, DeepSpeed, Megatron-LM) to generate detailed runtime data and workload graphs. The system is designed to support distributed training scenarios and consists of the following components:
+The Echo Workload Tracer focuses on tracing and profiling the workload of different frameworks (PyTorch, DeepSpeed, Megatron-LM) to generate detailed runtime data and workload graphs. The module is designed to support distributed training scenarios and consists of the following components:
 
 1. **Workload Runtime**
-   - Captures runtime information for models.
-   - Outputs runtime data for further analysis.
+   - Captures runtime information for LLM training workload.
+   - Outputs runtime data for further analysis and simulation.
 
 2. **Workload Graph**
-   - Generates computational graphs for models.
+   - Generates execution graphs for LLM training workload.
    - Provides insights into model structure and execution.
 
 ## Installation
 
 ### Prerequisites
-- Python 3.9
-- NVIDIA GPU with CUDA support
+- NVIDIA GPU with CUDA support (at least 1 GPU)
 - Conda package manager
 
 ### Setup Instructions
