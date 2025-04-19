@@ -18,15 +18,15 @@ The Echo Workload Tracer focuses on tracing and profiling the workload of differ
 
 ### Prerequisites
 - NVIDIA GPU with CUDA support (at least 1 GPU)
-- Conda package manager
 
 ### Setup Instructions
 
 1. **Clone Git Repository**
     ```bash
     git clone https://github.com/fwyc0573/Echo-workload-tracer.git
-    export PYTHONPATH=$PYTHONPATH:/root/Echo-workload-tracer
     cd Echo-workload-tracer
+
+    export PYTHONPATH=$PYTHONPATH:/to/your/path/Echo-workload-tracer
     ```
 
 2. **Setup Conda Environment**
@@ -39,19 +39,7 @@ The Echo Workload Tracer focuses on tracing and profiling the workload of differ
 
 ### Basic Execution
 
-1.**Prework:**
-- Add your Python path to the first line of `workload_tracer.py`
-```bash
-which python
-```
-
-2. **Modify the path to `torch_analysis` if needed:**
-```python
-import sys
-sys.path.append('/root/Echo-workload-tracer/torch_analysis')
-```
-
-3. **Run the complete pipeline:**
+**Run the complete pipeline:**
 
 ```bash
 sh ./tracing_run.sh
