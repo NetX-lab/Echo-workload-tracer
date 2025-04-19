@@ -126,7 +126,7 @@ If you use this module in your research, please cite our paper:
 
 ## Contact
 
-Please email Yicheng Feng (<yichengfeng@link.cuhk.edu.hk>) if you have any questions.
+Please email Yicheng F
 
 
 ## License
