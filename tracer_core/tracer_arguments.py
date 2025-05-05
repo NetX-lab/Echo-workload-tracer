@@ -1,4 +1,4 @@
-from common import (
+from utils.common import (
     FRAME_NAME_PYTORCH, FRAME_NAME_DEEPSPEED, FRAME_NAME_MEGATRON,
     MODE_RUNTIME_PROFILING, MODE_GRAPH_PROFILING,
     MODEL_SOURCE_HUGGINGFACE, MODEL_SOURCE_LOCAL,
@@ -7,6 +7,23 @@ from common import (
 import argparse
 
 
+def check_args(args: Any) -> None:
+    """
+    Check the arguments.
+    """
+    assert args.num_gpus > 0, "Number of GPUs must be greater than 0"
+
+    assert args.bath_path is not None, "Output path must be specified"
+
+    if args.framework == FRAME_NAME_PYTORCH:
+        if args.num_gpus > 1:
+            args.pytorch_ddp = True
+        else:
+            args.pytorch_ddp = False
+
+        if args.pytorch_only_compute_workload:
+            args.num_gpus = 1
+            args.pytorch_ddp = False
 
 
 def get_parser(
@@ -25,7 +42,18 @@ def get_parser(
         default=FRAME_NAME_PYTORCH, 
         help='Framework to use for workload tracing'
     )
-
+    tracer_group.add_argument(
+        '--bath_path', 
+        type=str, 
+        default='output/', 
+        help='Path to save the output'
+    )
+    tracer_group.add_argument(
+        '--num_gpus',
+        type=int,
+        default=1,
+        help='Number of GPUs to use in training'
+    )
     return parser
 
 
@@ -66,8 +94,8 @@ def _set_pytorch_args(
     pytorch_group.add_argument(
         '--mode',
         type=str,
-        choices=['runtime_profiling', 'graph_profiling'],
-        default='runtime_profiling',
+        choices=[MODE_RUNTIME_PROFILING, MODE_GRAPH_PROFILING],
+        default=MODE_RUNTIME_PROFILING,
         help='Mode for PyTorch workload tracing'
     )
     pytorch_group.add_argument(
@@ -79,16 +107,16 @@ def _set_pytorch_args(
     pytorch_group.add_argument(
         '--model_source', 
         type=str, 
-        choices=['huggingface', 'local'], 
-        default='local', 
+        choices=[MODEL_SOURCE_HUGGINGFACE, MODEL_SOURCE_LOCAL], 
+        default=MODEL_SOURCE_LOCAL, 
         help='Model source'
     )
-    pytorch_group.add_argument(
-        '--path', 
-        type=str, 
-        default='output/pytorch/workload_runtime', 
-        help='Output path'
-    )
+    # pytorch_group.add_argument(
+    #     '--path', 
+    #     type=str, 
+    #     default='output/pytorch/workload_runtime', 
+    #     help='Output path'
+    # )
     pytorch_group.add_argument(
         '--batchsize', 
         type=int, 
@@ -102,6 +130,19 @@ def _set_pytorch_args(
         help='Number of repeats'
     )
 
+    pytorch_group.add_argument(
+        '--pytorch_ddp',
+        action='store_true',
+        default=False,
+        help='Enable PyTorch DistributedDataParallel (DDP) if set'
+    )
+    pytorch_group.add_argument(
+        '--pytorch_only_compute_workload',
+        action='store_true',
+        default=False,
+        help='Only tracing the compute workload in training'
+    )
+
 
 def _set_deepspeed_args(
     parser: argparse.ArgumentParser
@@ -112,6 +153,7 @@ def _set_deepspeed_args(
     Args:
         parser: The argument parser to add arguments to.
     """
+    # TODO: ADD DEEPSPEED ARGS
     deepspeed_group = parser.add_argument_group('DeepSpeed')
     deepspeed_group.add_argument(
         '--deepspeed_mode',
@@ -155,6 +197,7 @@ def _set_megatron_args(
     Args:
         parser: The argument parser to add arguments to.
     """
+    # TODO: ADD MEGATRON ARGS
     megatron_group = parser.add_argument_group('Megatron-LM')
     megatron_group.add_argument(
         '--megatron_mode',

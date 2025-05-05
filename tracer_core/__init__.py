@@ -19,11 +19,11 @@ try:
 except ImportError:
     pass
 
-from tracer_core.factory import TracerFactory, create_tracer
+from tracer_core.tracer_initializer import TracerInitializer, create_tracer
 
 __all__ = [
     "BaseTracer",
     "PyTorchTracer",
-    "TracerFactory",
+    "TracerInitializer",
     "create_tracer"
 ] 

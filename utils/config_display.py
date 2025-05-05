@@ -4,11 +4,11 @@ Configuration display module for Echo Workload Tracer.
 This module provides classes for displaying configuration parameters
 in a professional and visually appealing format across different frameworks.
 """
-from common import (
+from utils.common import (
     FRAME_NAME_PYTORCH, FRAME_NAME_DEEPSPEED, FRAME_NAME_MEGATRON,
     MODE_RUNTIME_PROFILING, MODE_GRAPH_PROFILING,
     MODEL_SOURCE_HUGGINGFACE, MODEL_SOURCE_LOCAL,
-    Any, Dict, Optional
+    Any, Dict, Optional, torch
 )
 
 
@@ -210,3 +210,21 @@ def get_config_display(args: Any) -> BaseConfigDisplay:
     else:
         # Default to base class if framework not recognized
         return BaseConfigDisplay(args)
+    
+
+def display_config(args: Any) -> None:
+    """
+    Display the configuration of the workload tracer.
+    """
+    # Add hardware information to args if using PyTorch
+    if torch.cuda.is_available():
+        setattr(args, '_cuda_available', True)
+        setattr(args, '_gpu_name', torch.cuda.get_device_name(0))
+        setattr(args, '_gpu_memory', f"{torch.cuda.get_device_properties(0).total_memory / 1024**3:.2f}")
+    else:
+        setattr(args, '_cuda_available', False)
+        raise ValueError("Echo needs at least one GPU to run.")
+
+    # Get the appropriate config display instance and display configuration
+    config_display = get_config_display(args)
+    config_display.display()

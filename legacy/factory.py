@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Tracer Factory - Factory class for creating appropriate tracers based on framework.
+Tracer Initializer - Initialization class for creating appropriate tracers based on framework.
 """
 
 from typing import Any, Dict, Optional, Union
@@ -25,15 +25,15 @@ try:
 except ImportError:
     MEGATRON_AVAILABLE = False
 
-from common import (
+from utils.common import (
     FRAME_NAME_PYTORCH, FRAME_NAME_DEEPSPEED, FRAME_NAME_MEGATRON,
     MODE_RUNTIME_PROFILING, MODE_GRAPH_PROFILING
 )
 
 
-class TracerFactory:
+class TracerInitializer:
     """
-    Factory class for creating appropriate tracers based on framework.
+    Initialization class for creating appropriate tracers based on framework.
     """
     
     @staticmethod
@@ -162,7 +162,7 @@ def create_tracer(args: Any) -> BaseTracer:
         if hasattr(args, 'global_batch_size'):
             kwargs['global_batch_size'] = args.global_batch_size
     
-    return TracerFactory.create_tracer(
+    return TracerInitializer.create_tracer(
         framework=framework,
         model=model,
         model_name=model_name,
