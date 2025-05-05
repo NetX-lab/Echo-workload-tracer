@@ -4,7 +4,13 @@ Configuration display module for Echo Workload Tracer.
 This module provides classes for displaying configuration parameters
 in a professional and visually appealing format across different frameworks.
 """
-from typing import Any, Dict, Optional
+from common import (
+    FRAME_NAME_PYTORCH, FRAME_NAME_DEEPSPEED, FRAME_NAME_MEGATRON,
+    MODE_RUNTIME_PROFILING, MODE_GRAPH_PROFILING,
+    MODEL_SOURCE_HUGGINGFACE, MODEL_SOURCE_LOCAL,
+    Any, Dict, Optional
+)
+
 
 # Color and styling constants
 class Colors:
@@ -195,11 +201,11 @@ def get_config_display(args: Any) -> BaseConfigDisplay:
     """
     framework = args.framework
     
-    if framework == 'PyTorch':
+    if framework == FRAME_NAME_PYTORCH:
         return PyTorchConfigDisplay(args)
-    elif framework == 'DeepSpeed':
+    elif framework == FRAME_NAME_DEEPSPEED:
         return DeepSpeedConfigDisplay(args)
-    elif framework == 'Megatron-LM':
+    elif framework == FRAME_NAME_MEGATRON:
         return MegatronConfigDisplay(args)
     else:
         # Default to base class if framework not recognized

@@ -177,5 +177,5 @@ cython_debug/
 .cursorignore
 .cursorrules
 .cursor/
-
 echo_paper/
+.cursor-update/

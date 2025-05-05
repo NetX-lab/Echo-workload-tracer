@@ -1,6 +1,96 @@
 # Echo Workload Tracer
 
-This repository contains the workload tracer part of [Echo: Simulating Distributed Training at Scale](https://arxiv.org/abs/2412.12487). This part focus on the tracing and profiling work.
+Echo Workload Tracer 是一个用于追踪和分析不同深度学习框架工作负载的工具。目前支持 PyTorch、DeepSpeed 和 Megatron-LM 框架。
+
+## 项目结构
+
+```
+.
+├── README.md
+├── tracer_arguments.py     # 命令行参数处理
+├── workload_tracer.py      # 主程序入口
+├── pytorch_tracing_run.sh  # PyTorch 追踪运行脚本
+├── deepspeed_tracing_run.sh # DeepSpeed 追踪运行脚本
+├── megatron_tracing_run.sh  # Megatron-LM 追踪运行脚本
+└── output/                 # 输出目录
+    ├── pytorch/           # PyTorch 输出
+    ├── deepspeed/         # DeepSpeed 输出
+    └── megatron/          # Megatron-LM 输出
+```
+
+## 使用方法
+
+### 通过 Python 直接运行
+
+```bash
+# PyTorch 运行示例
+python workload_tracer.py --framework PyTorch --mode runtime_profiling --model gpt2 --batchsize 32
+
+# DeepSpeed 运行示例
+python workload_tracer.py --framework DeepSpeed --deepspeed_mode inference --deepspeed_model gpt2
+
+# Megatron-LM 运行示例
+python workload_tracer.py --framework Megatron-LM --megatron_tp_size 2 --megatron_pp_size 2
+```
+
+### 通过 Shell 脚本运行
+
+我们提供了每个框架的专用运行脚本：
+
+```bash
+# PyTorch
+./pytorch_tracing_run.sh --model gpt2 --batchsize 32 --num_repeats 3
+
+# DeepSpeed
+./deepspeed_tracing_run.sh --deepspeed_model gpt2 --deepspeed_batchsize 32
+
+# Megatron-LM
+./megatron_tracing_run.sh --megatron_model gpt2 --megatron_tp_size 2 --megatron_pp_size 2
+```
+
+## 参数说明
+
+### 通用参数
+
+- `--framework`: 选择要使用的框架，可选值: 'PyTorch', 'DeepSpeed', 'Megatron-LM'
+
+### PyTorch 参数
+
+- `--mode`: 追踪模式，可选值: 'runtime_profiling', 'graph_profiling'
+- `--model`: 要基准测试的模型
+- `--model_source`: 模型来源，可选值: 'huggingface', 'local'
+- `--path`: 输出路径
+- `--batchsize`: 批处理大小
+- `--num_repeats`: 重复次数
+
+### DeepSpeed 参数
+
+- `--deepspeed_mode`: DeepSpeed 追踪模式，可选值: 'inference', 'training'
+- `--deepspeed_model`: 要测试的模型
+- `--deepspeed_path`: 输出路径
+- `--deepspeed_batchsize`: 批处理大小
+- `--deepspeed_config`: DeepSpeed 配置文件路径
+
+### Megatron-LM 参数
+
+- `--megatron_mode`: Megatron 追踪模式，可选值: 'inference', 'training', 'pipeline_parallel'
+- `--megatron_model`: 要测试的模型
+- `--megatron_path`: 输出路径
+- `--megatron_batchsize`: 批处理大小
+- `--megatron_tp_size`: 张量并行度大小
+- `--megatron_pp_size`: 流水线并行度大小
+
+## 开发指南
+
+### 添加新框架
+
+要添加新的框架支持，请遵循以下步骤：
+
+1. 在 `tracer_arguments.py` 中添加新的参数设置函数 `_set_<framework>_args`
+2. 在 `setup_framework_args` 函数中添加新框架的条件分支
+3. 在 `filter_args` 函数中添加新框架的参数过滤逻辑
+4. 在 `workload_tracer.py` 中添加新的追踪函数 `run_<framework>_tracer`
+5. 创建框架专用的运行脚本 `<framework>_tracing_run.sh`
 
 ## Project Overview
 
