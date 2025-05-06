@@ -1,208 +1,128 @@
 # Echo Workload Tracer
 
-Echo Workload Tracer 是一个用于追踪和分析不同深度学习框架工作负载的工具。目前支持 PyTorch、DeepSpeed 和 Megatron-LM 框架。
+Echo Workload Tracer is a tool designed for tracing and analyzing the workloads of different deep learning frameworks. Currently, it supports PyTorch, with DeepSpeed and Megatron-LM frameworks under active development.
 
-## 项目结构
+## Overview
+
+The Echo Workload Tracer focuses on capturing runtime information and generating detailed workload graphs from deep learning training jobs. This data is essential for analyzing performance, optimizing resource utilization, and simulating distributed training at scale.
+
+## Project Structure
 
 ```
 .
 ├── README.md
-├── tracer_arguments.py     # 命令行参数处理
-├── workload_tracer.py      # 主程序入口
-├── pytorch_tracing_run.sh  # PyTorch 追踪运行脚本
-├── deepspeed_tracing_run.sh # DeepSpeed 追踪运行脚本
-├── megatron_tracing_run.sh  # Megatron-LM 追踪运行脚本
-└── output/                 # 输出目录
-    ├── pytorch/           # PyTorch 输出
-    ├── deepspeed/         # DeepSpeed 输出
-    └── megatron/          # Megatron-LM 输出
+├── tracer_core/                # Core tracing functionality
+│   ├── base.py                 # Base tracer classes
+│   ├── pytorch_tracer.py       # PyTorch-specific tracing
+│   ├── tracer_arguments.py     # Command-line argument handling
+│   ├── tracer_initializer.py   # Tracer initialization
+│   ├── torch_analysis/         # PyTorch analysis utilities
+│   ├── deepspeed_tracer.py     # DeepSpeed tracing (under construction)
+│   └── megatron_tracer.py      # Megatron-LM tracing (under construction)
+├── workload_tracer.py          # Main program entry point
+├── pytorch_tracing_run.sh      # PyTorch tracing script
+└── output/                     # Output directory
 ```
 
-## 使用方法
+## Features
 
-### 通过 Python 直接运行
+- **PyTorch Support**: Comprehensive tracing for PyTorch models, including:
+  - Support for HuggingFace Transformers models
+  - Support for torchvision models
+  - Support for custom PyTorch models
+  - Capturing both forward and backward passes
+  - Extracting execution graphs and runtime data
 
-```bash
-# PyTorch 运行示例
-python workload_tracer.py --framework PyTorch --mode runtime_profiling --model gpt2 --batchsize 32
+- **Runtime Profiling**: Collects detailed metrics on model execution
+  - Operation-level timing data
+  - Memory usage patterns
+  - Device utilization statistics
 
-# DeepSpeed 运行示例
-python workload_tracer.py --framework DeepSpeed --deepspeed_mode inference --deepspeed_model gpt2
-
-# Megatron-LM 运行示例
-python workload_tracer.py --framework Megatron-LM --megatron_tp_size 2 --megatron_pp_size 2
-```
-
-### 通过 Shell 脚本运行
-
-我们提供了每个框架的专用运行脚本：
-
-```bash
-# PyTorch
-./pytorch_tracing_run.sh --model gpt2 --batchsize 32 --num_repeats 3
-
-# DeepSpeed
-./deepspeed_tracing_run.sh --deepspeed_model gpt2 --deepspeed_batchsize 32
-
-# Megatron-LM
-./megatron_tracing_run.sh --megatron_model gpt2 --megatron_tp_size 2 --megatron_pp_size 2
-```
-
-## 参数说明
-
-### 通用参数
-
-- `--framework`: 选择要使用的框架，可选值: 'PyTorch', 'DeepSpeed', 'Megatron-LM'
-
-### PyTorch 参数
-
-- `--mode`: 追踪模式，可选值: 'runtime_profiling', 'graph_profiling'
-- `--model`: 要基准测试的模型
-- `--model_source`: 模型来源，可选值: 'huggingface', 'local'
-- `--path`: 输出路径
-- `--batchsize`: 批处理大小
-- `--num_repeats`: 重复次数
-
-### DeepSpeed 参数
-
-- `--deepspeed_mode`: DeepSpeed 追踪模式，可选值: 'inference', 'training'
-- `--deepspeed_model`: 要测试的模型
-- `--deepspeed_path`: 输出路径
-- `--deepspeed_batchsize`: 批处理大小
-- `--deepspeed_config`: DeepSpeed 配置文件路径
-
-### Megatron-LM 参数
-
-- `--megatron_mode`: Megatron 追踪模式，可选值: 'inference', 'training', 'pipeline_parallel'
-- `--megatron_model`: 要测试的模型
-- `--megatron_path`: 输出路径
-- `--megatron_batchsize`: 批处理大小
-- `--megatron_tp_size`: 张量并行度大小
-- `--megatron_pp_size`: 流水线并行度大小
-
-## 开发指南
-
-### 添加新框架
-
-要添加新的框架支持，请遵循以下步骤：
-
-1. 在 `tracer_arguments.py` 中添加新的参数设置函数 `_set_<framework>_args`
-2. 在 `setup_framework_args` 函数中添加新框架的条件分支
-3. 在 `filter_args` 函数中添加新框架的参数过滤逻辑
-4. 在 `workload_tracer.py` 中添加新的追踪函数 `run_<framework>_tracer`
-5. 创建框架专用的运行脚本 `<framework>_tracing_run.sh`
-
-## Project Overview
-
-The Echo Workload Tracer focuses on tracing and profiling the workload of different frameworks (PyTorch, DeepSpeed, Megatron-LM) to generate detailed runtime data and workload graphs. The module is designed to support distributed training scenarios and consists of the following components:
-
-1. **Workload Runtime**
-   - Captures runtime information for LLM training workload.
-   - Outputs runtime data for further analysis and simulation.
-
-2. **Workload Graph**
-   - Generates execution graphs for LLM training workload.
-   - Provides insights into model structure and execution.
+- **Graph Profiling**: Generates visual and data representations of model execution graphs
 
 ## Installation
 
 ### Prerequisites
-- NVIDIA GPU with CUDA support (at least 1 GPU)
+- NVIDIA GPU with CUDA support (at least 1 GPU device)
+- Python 3.8 or higher
 
 ### Setup Instructions
 
-1. **Clone Git Repository**
+1. **Clone the repository**
     ```bash
     git clone https://github.com/fwyc0573/Echo-workload-tracer.git
     cd Echo-workload-tracer
-
-    export PYTHONPATH=$PYTHONPATH:/to/your/path/Echo-workload-tracer
+    
+    export PYTHONPATH=$PYTHONPATH:/path/to/Echo-workload-tracer
     ```
 
-2. **Setup Conda Environment**
+2. **Install dependencies**
     ```bash
-    conda env create -f environment.yml
-    conda activate echo-workload-tracer
+    pip install -r requirements.txt
     ```
 
 ## Usage
 
-### Basic Execution
+### PyTorch Tracing
 
-**Run the complete pipeline:**
+#### Using the Command Line
 
 ```bash
-sh ./tracing_run.sh
+# Basic usage
+python workload_tracer.py --framework PyTorch --pytorch_ops_profiling --model gpt2 --batch_size 32
+
+# Advanced options
+python workload_tracer.py --framework PyTorch --pytorch_graph_profiling --model bert-base-uncased --model_source huggingface --batch_size 16 --num_repeats 3 --base_path output/
 ```
 
-### Advanced Usage
+#### Using the Shell Script
 
-You can run `tracing_run.sh` with different parameters to customize the workload tracing process. Below are the available options:
-1. **Specify the framework to use**  
-   Use the `--framework` parameter to specify the framework for workload tracing. Supported options include `PyTorch`, `DeepSpeed`, and `Megatron-LM`. For example:
-   ```bash
-   sh ./tracing_run.sh --framework PyTorch
-   ```
+```bash
+# Basic usage
+./pytorch_tracing_run.sh --model gpt2 --batch_size 32
 
-2. **Specify the model to trace**  
-   Use the `--model_source` and `--model` parameter to specify the model and the source of the model you want to trace. 
-   For example, you can run a local model:
-   ```bash
-   sh ./tracing_run.sh --model gpt2 --model_source local
-   ```
-   Additionally, you can run a hugging face model:
-   ```bash
-   sh ./tracing_run.sh --model distilbert-base-uncased --model_source huggingface
-   ```
+# Advanced usage
+./pytorch_tracing_run.sh --model resnet50 --model_source huggingface --batch_size 64 --num_repeats 5 --base_path output/
+```
 
-3. **Set the output path**
-    Use the `--path` parameter to set a custom directory for storing the results:
-   ```bash
-   sh ./tracing_run.sh --path output/pytorch/workload_runtime
-   ```
+### PyTorch Parameters
 
-4. **Set the batch size and the number of repeats**
-    Use the `--batchsize` parameter to define the batch size for the workload and the `--num_repeats` parameter to specify how many times the workload should be repeated:
-    ```bash
-    sh ./tracing_run.sh --model gpt2 --batchsize 32 --num_repeats 5
-    ```
+- `--model`: Model to benchmark
+- `--model_source`: Model source, options: 'huggingface', 'local'
+- `--base_path`: Base output path
+- `--batch_size`: Batch size
+- `--num_repeats`: Number of repetitions
 
-### Parameter Summary
+### DeepSpeed and Megatron-LM Support
 
-| Parameter       | Description                                                                 | Default Value         |
-|------------------|-----------------------------------------------------------------------------|-----------------------|
-| `--framework`    | Specifies the framework to use for workload tracing (`PyTorch`, `DeepSpeed`, `Megatron-LM`). | `PyTorch`            |
-| `--model`        | The model to trace (e.g., `gpt2`, `bert`).                                 | `gpt2`               |
-| `--model_source` | The source of the model (`huggingface` or `local`).                        | `local`        |
-| `--batchsize`    | The batch size for the workload.                                           | `16`                 |
-| `--num_repeats`  | The number of times to repeat the workload tracing.                        | `1`                  |
-| `--path`         | The output directory for storing results.                                  | `output/pytorch/workload_runtime` |
-| `--mode`         | The tracing mode (`runtime_profiling` or `graph_profiling`).               | `runtime_profiling`  |
+Support for DeepSpeed and Megatron-LM frameworks is currently under construction. We are actively working on implementing comprehensive tracing capabilities for these frameworks and will update the documentation once they are available.
 
 ## Output
-The pipeline generates the following outputs:
+
+The tracer generates the following outputs:
 
 ```plaintext
 output/
-├── pytorch/
-│   ├── workload_graph/
-│   │   └── gpt2/                     # Example: GPT-2 workload graph
-│   └── workload_runtime/             # Runtime data for workloads
+└── pytorch/
+    ├── workload_graph/
+    │   └── [model_name]/        # Workload graphs
+    └── workload_runtime/        # Runtime data
+        └── [model_name]/        # Model-specific runtime data
 ```
 
+## Development Guide
 
-## Expected Results
+### Adding New Model Support
 
-After running the pipeline, you should expect:
+To add support for additional model types:
 
-- Detailed workload graphs for PyTorch models.
-- Runtime data for analyzing distributed training workloads.
-- Validated functionality of the tracing and analysis modules.
-
+1. Define the model loading function in the appropriate tracer file
+2. Register the model source in `tracer_arguments.py`
+3. Handle any model-specific operations or patterns
 
 ## Citation
 
-If you use this module in your research, please cite our paper:
+If you use this tool in your research, please cite our paper:
 
 ```bibtex
 @article{echo2024,
@@ -213,11 +133,9 @@ If you use this module in your research, please cite our paper:
 }
 ```
 
-
 ## Contact
 
-Please email Yicheng F
-
+Please email Yicheng Feng for questions or issues related to this project.
 
 ## License
 
