@@ -37,8 +37,8 @@ class DeepSpeedTracer(BaseTracer):
         model: nn.Module,
         model_name: str,
         example_input: torch.Tensor,
-        output_path: str,
-        mode: str,
+        output_path: Dict[str, str],
+        parallel_setting: Optional[str] = None,
         ds_config: Optional[Dict[str, Any]] = None,
         local_rank: int = 0,
         **kwargs
@@ -50,8 +50,8 @@ class DeepSpeedTracer(BaseTracer):
             model: PyTorch model to trace
             model_name: Name of the model
             example_input: Example input tensor for the model
-            output_path: Directory to save tracing results
-            mode: Tracing mode ('runtime_profiling' or 'graph_profiling')
+            output_path: Dictionary containing paths for different profiling outputs
+            parallel_setting: Parallel training setting (e.g., 'DDP')
             ds_config: DeepSpeed configuration dictionary
             local_rank: Local process rank for distributed training
             **kwargs: Additional arguments
@@ -59,11 +59,15 @@ class DeepSpeedTracer(BaseTracer):
         if not DEEPSPEED_AVAILABLE:
             raise ImportError("DeepSpeed is not installed. Please install it to use the DeepSpeedTracer.")
         
-        super().__init__(model, model_name, output_path, mode, **kwargs)
+        super().__init__(model, model_name, output_path, parallel_setting, **kwargs)
         
         self.example_input = example_input
         self.ds_config = ds_config or {}
         self.local_rank = local_rank
+        
+        # We have two modes of operation based on output path keys
+        self.ops_profiling_path = output_path.get('ops_profiling', '')
+        self.graph_profiling_path = output_path.get('graph_profiling', '')
         
         # Initialize DeepSpeed engine
         self._initialize_deepspeed()
@@ -76,7 +80,7 @@ class DeepSpeedTracer(BaseTracer):
         # Setup hooks for tracing
         self.setup_hooks()
         
-        self.logger.info(f"DeepSpeed tracer initialized for {model_name} in {mode} mode")
+        self.logger.info(f"DeepSpeed tracer initialized for {model_name} with parallel setting: {parallel_setting}")
     
     def _get_framework_name(self) -> str:
         """Return the framework name."""
@@ -130,14 +134,14 @@ class DeepSpeedTracer(BaseTracer):
                 
             # Forward pre-hook to capture input
             def forward_pre_hook(module, input, module_name=name):
-                if self.mode == "runtime_profiling":
+                if self.ops_profiling_path:
                     start_time = time.time()
                     module._trace_start_time = start_time
                 return None
             
             # Forward hook to capture output and execution time
             def forward_hook(module, input, output, module_name=name):
-                if self.mode == "runtime_profiling" and hasattr(module, "_trace_start_time"):
+                if self.ops_profiling_path and hasattr(module, "_trace_start_time"):
                     elapsed = time.time() - module._trace_start_time
                     self.module_runtime_stats[module_name]["forward"] = elapsed
                 
@@ -173,7 +177,7 @@ class DeepSpeedTracer(BaseTracer):
         self.module_forward_order = []
         
         # Runtime profiling mode
-        if self.mode == "runtime_profiling":
+        if self.ops_profiling_path:
             start_time = time.time()
             output = self.model_engine(input_data)
             elapsed = time.time() - start_time
@@ -204,7 +208,7 @@ class DeepSpeedTracer(BaseTracer):
         self.module_backward_order = []
         
         # Runtime profiling mode
-        if self.mode == "runtime_profiling":
+        if self.ops_profiling_path:
             start_time = time.time()
             # DeepSpeed handles backward differently than PyTorch
             self.model_engine.backward(loss)
@@ -226,7 +230,9 @@ class DeepSpeedTracer(BaseTracer):
         Returns:
             Dict[str, Any]: Dictionary containing the tracing results
         """
-        self.logger.info(f"Running {self.mode} for {self.model_name} with DeepSpeed")
+        # Determine active profiling mode based on output paths
+        profiling_mode = "ops_profiling" if self.ops_profiling_path else "graph_profiling"
+        self.logger.info(f"Running {profiling_mode} for {self.model_name} with DeepSpeed")
         
         # Perform forward pass
         output = self.trace_forward()
@@ -244,9 +250,9 @@ class DeepSpeedTracer(BaseTracer):
         self.save_trace()
         
         # Save mode-specific output files
-        if self.mode == "runtime_profiling":
+        if self.ops_profiling_path:
             self._save_runtime_data()
-        else:  # graph_profiling
+        if self.graph_profiling_path:
             self._save_graph_data()
         
         return result_data
@@ -260,15 +266,15 @@ class DeepSpeedTracer(BaseTracer):
         """
         result_data = {
             "model_name": self.model_name,
-            "mode": self.mode,
             "framework": self._get_framework_name(),
+            "parallel_setting": self.parallel_setting,
             "deepspeed_config": {
                 "zero_stage": self.ds_config.get("zero_optimization", {}).get("stage", 0),
                 "fp16_enabled": self.ds_config.get("fp16", {}).get("enabled", False)
             }
         }
         
-        if self.mode == "runtime_profiling":
+        if self.ops_profiling_path:
             # Collect runtime statistics
             runtime_stats = {
                 "forward_total": getattr(self, "forward_total_time", 0),
@@ -279,7 +285,8 @@ class DeepSpeedTracer(BaseTracer):
                 runtime_stats["backward_total"] = self.backward_total_time
             
             result_data["runtime_stats"] = runtime_stats
-        else:  # graph_profiling
+        
+        if self.graph_profiling_path:
             # Collect graph structure
             result_data["graph"] = {
                 "forward_order": self.module_forward_order,
@@ -290,7 +297,7 @@ class DeepSpeedTracer(BaseTracer):
     
     def _save_runtime_data(self) -> None:
         """Save the runtime profiling data to output files."""
-        output_dir = os.path.join(self.output_path, self.model_name)
+        output_dir = os.path.join(self.ops_profiling_path, self.model_name)
         os.makedirs(output_dir, exist_ok=True)
         
         # Save forward runtime data
@@ -325,7 +332,7 @@ class DeepSpeedTracer(BaseTracer):
     
     def _save_graph_data(self) -> None:
         """Save the graph profiling data to output files."""
-        output_dir = os.path.join(self.output_path, self.model_name)
+        output_dir = os.path.join(self.graph_profiling_path, self.model_name)
         os.makedirs(output_dir, exist_ok=True)
         
         # Only save from rank 0 to avoid file conflicts

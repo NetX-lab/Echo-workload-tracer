@@ -37,8 +37,8 @@ class MegatronTracer(BaseTracer):
         model: nn.Module,
         model_name: str,
         example_input: torch.Tensor,
-        output_path: str,
-        mode: str,
+        output_path: Dict[str, str],
+        parallel_setting: Optional[str] = None,
         tp_size: int = 1,
         pp_size: int = 1,
         micro_batch_size: int = 1,
@@ -52,8 +52,8 @@ class MegatronTracer(BaseTracer):
             model: PyTorch model to trace
             model_name: Name of the model
             example_input: Example input tensor for the model
-            output_path: Directory to save tracing results
-            mode: Tracing mode ('runtime_profiling' or 'graph_profiling')
+            output_path: Dictionary containing paths for different profiling outputs
+            parallel_setting: Parallel training setting (e.g., 'DDP')
             tp_size: Tensor parallelism size
             pp_size: Pipeline parallelism size
             micro_batch_size: Micro batch size for pipeline parallelism
@@ -63,13 +63,17 @@ class MegatronTracer(BaseTracer):
         if not MEGATRON_AVAILABLE:
             raise ImportError("Megatron-LM is not installed. Please install it to use the MegatronTracer.")
         
-        super().__init__(model, model_name, output_path, mode, **kwargs)
+        super().__init__(model, model_name, output_path, parallel_setting, **kwargs)
         
         self.example_input = example_input
         self.tp_size = tp_size
         self.pp_size = pp_size
         self.micro_batch_size = micro_batch_size
         self.global_batch_size = global_batch_size
+        
+        # We have two modes of operation based on output path keys
+        self.ops_profiling_path = output_path.get('ops_profiling', '')
+        self.graph_profiling_path = output_path.get('graph_profiling', '')
         
         # Get Megatron-LM arguments
         self.megatron_args = get_args()
@@ -94,7 +98,7 @@ class MegatronTracer(BaseTracer):
         # Setup hooks for tracing
         self.setup_hooks()
         
-        self.logger.info(f"Megatron-LM tracer initialized for {model_name} in {mode} mode")
+        self.logger.info(f"Megatron-LM tracer initialized for {model_name} with parallel setting: {parallel_setting}")
         self.logger.info(f"Tensor Parallel Size: {tp_size}, Pipeline Parallel Size: {pp_size}")
     
     def _get_framework_name(self) -> str:

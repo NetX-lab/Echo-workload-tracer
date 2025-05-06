@@ -4,7 +4,7 @@ import torch.optim as optim
 from typing import Any
 
 from utils.common import (
-    AutoModel, AutoTokenizer, ensure_dir_exists, MODEL_SOURCE_HUGGINGFACE, MODE_RUNTIME_PROFILING
+    AutoModel, AutoTokenizer, ensure_dir_exists, MODEL_SOURCE_HUGGINGFACE, PYTORCH_OPS_PROFILING
 )   
 import utils.transformer as transformer
 
@@ -27,19 +27,17 @@ def prepare_model_and_inputs(args: Any) -> None:
     Args:
         args: Command-line arguments
     """
-    # Create output directory if it doesn't exist
-    ensure_dir_exists(args.path)
-    
+
     # Load model and prepare input tensor
     if args.model_source == MODEL_SOURCE_HUGGINGFACE:
         model, tokenizer = load_huggingface_model(args.model)
         example_input = tokenizer("Hello, world!", return_tensors="pt", padding=True, truncation=True).input_ids.cuda()
     else:  # Local model
         model = getattr(transformer, args.model)().cuda()
-        example_input = (torch.LongTensor(args.batchsize, 512).random_() % 1000).cuda()
+        example_input = (torch.LongTensor(args.batch_size, 512).random_() % 1000).cuda()
     
     # Create optimizer if needed
-    if args.mode == MODE_RUNTIME_PROFILING:
+    if args.pytorch_ops_profiling or args.pytorch_graph_profiling:
         optimizer = optim.SGD(model.parameters(), lr=0.01)
     else:
         optimizer = None

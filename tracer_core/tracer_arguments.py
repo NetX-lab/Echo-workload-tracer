@@ -1,29 +1,48 @@
 from utils.common import (
     FRAME_NAME_PYTORCH, FRAME_NAME_DEEPSPEED, FRAME_NAME_MEGATRON,
-    MODE_RUNTIME_PROFILING, MODE_GRAPH_PROFILING,
+    PYTORCH_OPS_PROFILING, PYTORCH_GRAPH_PROFILING,
     MODEL_SOURCE_HUGGINGFACE, MODEL_SOURCE_LOCAL,
-    Any
+    Any, os, ensure_dir_exists
 )
-import argparse
+import argparse, warnings
 
 
-def check_args(args: Any) -> None:
+def check_update_args(args: Any) -> None:
     """
     Check the arguments.
     """
     assert args.num_gpus > 0, "Number of GPUs must be greater than 0"
 
-    assert args.bath_path is not None, "Output path must be specified"
+    assert args.base_path is not None, "Output path must be specified"
 
     if args.framework == FRAME_NAME_PYTORCH:
         if args.num_gpus > 1:
             args.pytorch_ddp = True
         else:
             args.pytorch_ddp = False
+            args.pytorch_only_compute_workload = True
 
         if args.pytorch_only_compute_workload:
             args.num_gpus = 1
             args.pytorch_ddp = False
+
+        # Ensure at least one profiling mode is enabled in PyTorch simulation.
+        if not args.pytorch_ops_profiling and not args.pytorch_graph_profiling:
+            args.pytorch_ops_profiling = True  # Default to ops profiling if none specified
+            
+        args.ops_profiling_output_path = None
+        if args.pytorch_ops_profiling:
+            args.ops_profiling_output_path = os.path.join(args.base_path, FRAME_NAME_PYTORCH, PYTORCH_OPS_PROFILING, args.model)
+            ensure_dir_exists(args.ops_profiling_output_path)
+
+        args.graph_profiling_output_path = None
+        if args.pytorch_graph_profiling:
+            args.graph_profiling_output_path = os.path.join(args.base_path, FRAME_NAME_PYTORCH, PYTORCH_GRAPH_PROFILING, args.model)
+            ensure_dir_exists(args.graph_profiling_output_path)
+        
+        args.output_log_path = os.path.join(args.base_path, 'logs', FRAME_NAME_PYTORCH)
+        ensure_dir_exists(args.output_log_path)
+
 
 
 def get_parser(
@@ -43,7 +62,7 @@ def get_parser(
         help='Framework to use for workload tracing'
     )
     tracer_group.add_argument(
-        '--bath_path', 
+        '--base_path', 
         type=str, 
         default='output/', 
         help='Path to save the output'
@@ -92,11 +111,16 @@ def _set_pytorch_args(
     """
     pytorch_group = parser.add_argument_group('PyTorch')
     pytorch_group.add_argument(
-        '--mode',
-        type=str,
-        choices=[MODE_RUNTIME_PROFILING, MODE_GRAPH_PROFILING],
-        default=MODE_RUNTIME_PROFILING,
-        help='Mode for PyTorch workload tracing'
+        '--pytorch_ops_profiling',
+        action='store_true',
+        default=True,
+        help='Enable operations profiling for PyTorch workload'
+    )
+    pytorch_group.add_argument(
+        '--pytorch_graph_profiling',
+        action='store_true',
+        default=False,
+        help='Enable graph profiling for PyTorch workload'
     )
     pytorch_group.add_argument(
         '--model', 
@@ -118,7 +142,7 @@ def _set_pytorch_args(
     #     help='Output path'
     # )
     pytorch_group.add_argument(
-        '--batchsize', 
+        '--batch_size', 
         type=int, 
         default=16, 
         help='Batch size'
@@ -175,7 +199,7 @@ def _set_deepspeed_args(
         help='Output path for DeepSpeed results'
     )
     deepspeed_group.add_argument(
-        '--deepspeed_batchsize', 
+        '--deepspeed_batch_size', 
         type=int, 
         default=16, 
         help='Batch size for DeepSpeed'
@@ -219,7 +243,7 @@ def _set_megatron_args(
         help='Output path for Megatron-LM results'
     )
     megatron_group.add_argument(
-        '--megatron_batchsize', 
+        '--megatron_batch_size', 
         type=int, 
         default=16, 
         help='Batch size for Megatron-LM'
@@ -261,10 +285,11 @@ def filter_args(
         An ArgsObject containing only the relevant arguments for the selected framework.
     """
     if args.framework == FRAME_NAME_PYTORCH:
-        if args.mode == 'runtime_profiling':
-            filtered_dict = {k: v for k, v in vars(args).items() if k in ['model', 'path', 'batchsize', 'num_repeats', 'model_source']}
-        else:
-            filtered_dict = {k: v for k, v in vars(args).items() if k in ['model', 'path', 'batchsize', 'model_source']}
+        # Include both profiling flags, and determine which profiling to do at runtime
+        filtered_dict = {k: v for k, v in vars(args).items() 
+                         if k in ['model', 'path', 'batch_size', 'num_repeats', 
+                                  'model_source', 'pytorch_ops_profiling', 
+                                  'pytorch_graph_profiling']}
     elif args.framework == FRAME_NAME_DEEPSPEED:
         filtered_dict = {k.replace('deepspeed_', ''): v for k, v in vars(args).items() if k.startswith('deepspeed_')}
     elif args.framework == FRAME_NAME_MEGATRON:

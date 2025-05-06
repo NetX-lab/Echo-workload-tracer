@@ -25,5 +25,6 @@ __all__ = [
     "BaseTracer",
     "PyTorchTracer",
     "TracerInitializer",
-    "create_tracer"
+    "create_tracer",
+    "torch_analysis"
 ] 

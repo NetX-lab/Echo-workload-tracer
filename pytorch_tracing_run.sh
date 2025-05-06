@@ -1,37 +1,39 @@
 #!/bin/bash
 
 # Default parameters
-FRAMEWORK="PyTorch"
-MODE="runtime_profiling"
+PROFILING_MODE="pytorch_ops_profiling" #  pytorch_graph_profiling 
 MODEL="gpt2"
 MODEL_SOURCE="local"
-OUTPUT_PATH="output/pytorch/workload_runtime"
-BATCHSIZE=16
+BASE_PATH="output/"
+BATCH_SIZE=16
 NUM_REPEATS=1
+NUM_GPUS=1
+
+
 
 # Parse command-line arguments
 while [[ "$#" -gt 0 ]]; do
     case $1 in
-        --framework) FRAMEWORK="$2"; shift ;;
-        --mode) MODE="$2"; shift ;;
         --model) MODEL="$2"; shift ;;
         --model_source) MODEL_SOURCE="$2"; shift ;;
-        --path) OUTPUT_PATH="$2"; shift ;;
-        --batchsize) BATCHSIZE="$2"; shift ;;
+        --base_path) BASE_PATH="$2"; shift ;;
+        --batch_size) BATCH_SIZE="$2"; shift ;;
         --num_repeats) NUM_REPEATS="$2"; shift ;;
+        --num_gpus) NUM_GPUS="$2"; shift ;;
         *) echo "Unknown parameter passed: $1"; exit 1 ;;
     esac
     shift
 done
 
+
 # Execute workload_tracer.py with the specified parameters
 python main.py \
-    --framework "$FRAMEWORK" \
-    --mode "$MODE" \
+    --framework "PyTorch" \
     --model "$MODEL" \
     --model_source "$MODEL_SOURCE" \
-    --path "$OUTPUT_PATH" \
-    --batchsize "$BATCHSIZE" \
-    --num_repeats "$NUM_REPEATS"
-
-echo "Tracing completed for $FRAMEWORK framework."
+    --base_path "$BASE_PATH" \
+    --batch_size "$BATCH_SIZE" \
+    --num_repeats "$NUM_REPEATS" \
+    --num_gpus "$NUM_GPUS" \
+    --$PROFILING_MODE
+    # --pytorch_only_compute_workload \

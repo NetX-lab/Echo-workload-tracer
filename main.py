@@ -5,20 +5,25 @@
 Workload Tracer - Main module for tracing workloads across different frameworks.
 """
 
+
+
+from tracer_core.tracer_arguments import get_parser, setup_framework_args, check_update_args
+from tracer_core import create_tracer
+from utils import (
+    prepare_model_and_inputs,
+    display_config,
+    get_logger
+)
 from utils.common import (
     os, sys, torch, logging, optim, 
     FRAME_NAME_PYTORCH, FRAME_NAME_DEEPSPEED, FRAME_NAME_MEGATRON,
-    MODE_RUNTIME_PROFILING, MODE_GRAPH_PROFILING,
+    PYTORCH_OPS_PROFILING, PYTORCH_GRAPH_PROFILING,
     MODEL_SOURCE_HUGGINGFACE, MODEL_SOURCE_LOCAL,
     Any, ensure_dir_exists, AutoModel, AutoTokenizer
 )
 
-from tracer_core.tracer_arguments import get_parser, setup_framework_args, check_args
-from tracer_core import create_tracer
-from utils import (
-    prepare_model_and_inputs,
-    display_config
-)
+# Initialize logger
+logger = get_logger('Echo tracer main')
 
 def run_tracer(args: Any) -> None:
     """
@@ -32,12 +37,9 @@ def run_tracer(args: Any) -> None:
     
     # Run the tracer
     result = tracer.run()
-    
-    # Clean up resources
-    tracer.cleanup()
-    
-    print(f"Tracing completed for {args.model} with {args.framework} in {args.mode} mode")
-    print(f"Results saved to {args.path}")
+
+    logger.info(f"Tracing completed for {args.model} with {args.framework}.")
+
 
 def initial_args() -> Any:
     """
@@ -56,8 +58,7 @@ def initial_args() -> Any:
     args = parser.parse_args()
     
     # Check args
-    check_args(args)
-
+    check_update_args(args)
 
     # Display the configuration
     display_config(args)

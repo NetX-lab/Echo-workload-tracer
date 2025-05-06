@@ -6,10 +6,10 @@ in a professional and visually appealing format across different frameworks.
 """
 from utils.common import (
     FRAME_NAME_PYTORCH, FRAME_NAME_DEEPSPEED, FRAME_NAME_MEGATRON,
-    MODE_RUNTIME_PROFILING, MODE_GRAPH_PROFILING,
-    MODEL_SOURCE_HUGGINGFACE, MODEL_SOURCE_LOCAL,
-    Any, Dict, Optional, torch
+    PYTORCH_OPS_PROFILING, PYTORCH_GRAPH_PROFILING, PYTORCH_ONLY_COMPUTE_WORKLOAD,
+    Any, Dict, Optional, torch, os, json
 )
+from datetime import datetime
 
 
 # Color and styling constants
@@ -64,7 +64,7 @@ class BaseConfigDisplay:
         
         # Output configuration
         print(f"\n{self.c.BOLD}{self.c.BLUE}Output Configuration:{self.c.END}")
-        print(f"  • Output Path:  {self.c.GREEN}{self.args.path}{self.c.END}")
+        print(f"  • Base Path:  {self.c.GREEN}{self.args.base_path}{self.c.END}")
     
     def _display_framework_specific(self) -> None:
         """
@@ -80,7 +80,8 @@ class BaseConfigDisplay:
     
     def _display_footer(self) -> None:
         """Display the footer for the configuration output."""
-        print(f"\n{self.c.BOLD}{self.c.YELLOW}Starting workload tracing...{self.c.END}\n")
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        print(f"\n{self.c.BOLD}{self.c.YELLOW}Starting workload tracing at {timestamp} ...{self.c.END}\n")
 
     @staticmethod
     def format_section(items: Dict[str, Any], colors: Optional[Dict[str, str]] = None) -> None:
@@ -99,6 +100,55 @@ class BaseConfigDisplay:
             color = colors.get(key, c.GREEN)
             print(f"  • {key.ljust(13)} {color}{value}{c.END}")
 
+    def save_config_to_json(self, args: Any) -> None:
+        """
+        Save configuration to a JSON file.
+        
+        Args:
+            args: The parsed command-line arguments.
+        """
+
+        # Create config dictionary
+        config = {
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "framework_settings": {
+                "framework": args.framework,
+                "base_path": args.base_path,
+                "num_gpus": args.num_gpus
+            }
+        }
+        
+        # Add framework specific settings
+        if args.framework == FRAME_NAME_PYTORCH:
+            config["pytorch_settings"] = {
+                "ddp": getattr(args, 'pytorch_ddp', False),
+                "compute_only": getattr(args, PYTORCH_ONLY_COMPUTE_WORKLOAD, False),
+                "ops_profiling": getattr(args, PYTORCH_OPS_PROFILING, False),
+                "graph_profiling": getattr(args, PYTORCH_GRAPH_PROFILING, False),
+                "ops_profiling_path": getattr(args, 'ops_profiling_output_path', None),
+                "graph_profiling_path": getattr(args, 'graph_profiling_output_path', None),
+                "output_log_path": getattr(args, 'output_log_path', None)
+            }
+            config["model_settings"] = {
+                "model": args.model,
+                "model_source": args.model_source,
+                "batch_size": args.batch_size,
+                "num_repeats": getattr(args, 'num_repeats', None)
+            }
+            config["hardware_settings"] = {
+                "cuda_available": getattr(args, '_cuda_available', False),
+                "gpu_name": getattr(args, '_gpu_name', 'Unknown'),
+                "gpu_memory": getattr(args, '_gpu_memory', 'Unknown')
+            }
+        
+        # Ensure the output directory exists
+        output_dir = getattr(args, 'output_log_path', 'output/logs')
+
+        # Save to file
+        config_path = os.path.join(output_dir, 'config.json')
+        with open(config_path, 'w') as f:
+            json.dump(config, f, indent=4)
+
 
 class PyTorchConfigDisplay(BaseConfigDisplay):
     """Configuration display for PyTorch framework."""
@@ -107,38 +157,75 @@ class PyTorchConfigDisplay(BaseConfigDisplay):
         """Display PyTorch-specific configuration."""
         c = self.c
         
-        # Mode information
-        print(f"  • Mode:         {c.GREEN}{self.args.mode}{c.END}")
+        # Framework Settings Detail
+        print(f"\n{c.BOLD}{c.BLUE}PyTorch Settings:{c.END}")
+        
+        # Display DDP and compute workload settings
+        ddp_status = "Enabled" if getattr(self.args, 'pytorch_ddp', False) else "Disabled"
+        print(f"  • DDP:          {c.GREEN}{ddp_status}{c.END}")
+        
+        compute_only = "Yes" if getattr(self.args, PYTORCH_ONLY_COMPUTE_WORKLOAD, False) else "No"
+        print(f"  • Compute Only: {c.GREEN}{compute_only}{c.END}")
+        
+        # Profiling Mode information
+        profiling_modes = []
+        if getattr(self.args, 'pytorch_ops_profiling', False):
+            profiling_modes.append(f"{c.GREEN}Ops Profiling{c.END}")
+            ops_path = getattr(self.args, 'ops_profiling_output_path', 'Not specified')
+            print(f"  • Ops Path:     {c.GREEN}{ops_path}{c.END}")
+            
+        if getattr(self.args, 'pytorch_graph_profiling', False):
+            profiling_modes.append(f"{c.GREEN}Graph Profiling{c.END}")
+            graph_path = getattr(self.args, 'graph_profiling_output_path', 'Not specified')
+            print(f"  • Graph Path:   {c.GREEN}{graph_path}{c.END}")
+            
+        if profiling_modes:
+            print(f"  • Profiling:    {', '.join(profiling_modes)}")
+        else:
+            print(f"  • Profiling:    {c.YELLOW}None{c.END}")
+
+        output_log_path = getattr(self.args, 'output_log_path', 'Not specified')
+        print(f"  • Log Path:     {c.GREEN}{output_log_path}{c.END}")
         
         # Model information
         print(f"\n{c.BOLD}{c.BLUE}Model Configuration:{c.END}")
         print(f"  • Model:        {c.GREEN}{self.args.model}{c.END}")
         print(f"  • Model Source: {c.GREEN}{self.args.model_source}{c.END}")
-        print(f"  • Batch Size:   {c.GREEN}{self.args.batchsize}{c.END}")
+        print(f"  • Batch Size:   {c.GREEN}{self.args.batch_size}{c.END}")
         
         # Performance settings
         if hasattr(self.args, 'num_repeats'):
-            print(f"\n{c.BOLD}{c.BLUE}Performance Settings:{c.END}")
+            print(f"\n{c.BOLD}{c.BLUE}Performance Profiling settings:{c.END}")
             print(f"  • Num Repeats:  {c.GREEN}{self.args.num_repeats}{c.END}")
-    
+            
+        # GPU settings
+        self.args.local_cuda_available = getattr(self.args, '_cuda_available', False)
+        if self.args.local_cuda_available:
+            # These values should be passed from the main script
+            self.args.gpu_name = getattr(self.args, '_gpu_name', 'Unknown')
+            self.args.gpu_memory = getattr(self.args, '_gpu_memory', 'Unknown')
+
+        print(f"\n{c.BOLD}{c.BLUE}GPU Configuration in Training:{c.END}")
+        print(f"  • Num GPUs:     {c.GREEN}{self.args.num_gpus}{c.END}")
+        print(f"  • GPU Type:     {c.GREEN}{self.args.gpu_name}{c.END}")
+        print(f"  • GPU Memory:   {c.GREEN}{self.args.gpu_memory} GB{c.END}")
+
     def _display_hardware_info(self) -> None:
         """Display hardware information related to PyTorch."""
         c = self.c
         
-        print(f"\n{c.BOLD}{c.BLUE}Hardware Information:{c.END}")
+        print(f"\n{c.BOLD}{c.BLUE}Local Hardware Information:{c.END}")
         
         # We'll check torch availability when this class is instantiated
         # This avoids importing torch here
-        cuda_available = getattr(self.args, '_cuda_available', False)
+        # cuda_available = getattr(self.args, '_cuda_available', False)
         
-        if cuda_available:
+        if self.args.local_cuda_available:
             # These values should be passed from the main script
-            gpu_name = getattr(self.args, '_gpu_name', 'Unknown')
-            gpu_memory = getattr(self.args, '_gpu_memory', 'Unknown')
-            
+
             print(f"  • CUDA:         {c.GREEN}Available{c.END}")
-            print(f"  • GPU:          {c.GREEN}{gpu_name}{c.END}")
-            print(f"  • GPU Memory:   {c.GREEN}{gpu_memory} GB{c.END}")
+            print(f"  • GPU:          {c.GREEN}{self.args.gpu_name}{c.END}")
+            print(f"  • GPU Memory:   {c.GREEN}{self.args.gpu_memory} GB{c.END}")
         else:
             print(f"  • CUDA:         {c.YELLOW}Not Available{c.END}")
 
@@ -228,3 +315,6 @@ def display_config(args: Any) -> None:
     # Get the appropriate config display instance and display configuration
     config_display = get_config_display(args)
     config_display.display()
+
+    # Save configuration to JSON file
+    config_display.save_config_to_json(args)

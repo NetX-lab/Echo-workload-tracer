@@ -179,3 +179,9 @@ cython_debug/
 .cursor/
 echo_paper/
 .cursor-update/
+
+# file
+output/
+legacy/
+deepspeed_tracing_run.sh
+megatron_tracing_run.sh

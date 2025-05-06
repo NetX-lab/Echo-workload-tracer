@@ -25,8 +25,10 @@ except ImportError as e:
     sys.exit(1)
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+# logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# logger = logging.getLogger(__name__)
+
+
 
 # Framework constants
 FRAME_NAME_PYTORCH = 'PyTorch'
@@ -34,8 +36,10 @@ FRAME_NAME_DEEPSPEED = 'DeepSpeed'
 FRAME_NAME_MEGATRON = 'Megatron-LM'
 
 # Profiling modes
-MODE_RUNTIME_PROFILING = 'runtime_profiling'
-MODE_GRAPH_PROFILING = 'graph_profiling'
+PYTORCH_OPS_PROFILING = 'pytorch_ops_profiling'
+PYTORCH_GRAPH_PROFILING = 'pytorch_graph_profiling'
+PYTORCH_ONLY_COMPUTE_WORKLOAD = 'pytorch_only_compute_workload'
+
 
 # Model sources
 MODEL_SOURCE_HUGGINGFACE = 'huggingface'
@@ -45,9 +49,13 @@ MODEL_SOURCE_LOCAL = 'local'
 DEFAULT_OUTPUT_DIR = 'output'
 CONFIG_FILE_PATH = 'configs'
 
+# Parallel settings
+PARALLEL_SETTING_DDP = 'pytorch_ddp'
+
+
 # Common utility functions
 def ensure_dir_exists(directory: str) -> None:
     """Create directory if it doesn't exist."""
     if not os.path.exists(directory):
         os.makedirs(directory)
-        logger.info(f"Created directory: {directory}")
+        # logger.info(f"Created directory: {directory}")

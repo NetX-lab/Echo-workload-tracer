@@ -5,10 +5,12 @@
 Tracer Initializer - Initialization class for creating appropriate tracers based on framework.
 """
 
-from typing import Any, Dict, Optional, Union
-import torch
-import torch.nn as nn
-
+from utils.common import (
+    torch,
+    FRAME_NAME_PYTORCH, FRAME_NAME_DEEPSPEED, FRAME_NAME_MEGATRON,
+    PYTORCH_OPS_PROFILING, PYTORCH_GRAPH_PROFILING,PYTORCH_ONLY_COMPUTE_WORKLOAD,
+    Any, Dict, Optional, Union
+)
 from tracer_core.base import BaseTracer
 from tracer_core.pytorch_tracer import PyTorchTracer
 
@@ -27,7 +29,7 @@ except ImportError:
 
 from utils.common import (
     FRAME_NAME_PYTORCH, FRAME_NAME_DEEPSPEED, FRAME_NAME_MEGATRON,
-    MODE_RUNTIME_PROFILING, MODE_GRAPH_PROFILING
+    PARALLEL_SETTING_DDP
 )
 
 
@@ -39,11 +41,11 @@ class TracerInitializer:
     @staticmethod
     def create_tracer(
         framework: str,
-        model: nn.Module,
+        model: torch.nn.Module,
         model_name: str,
         example_input: torch.Tensor,
-        output_path: str,
-        mode: str,
+        output_path: Dict[str, str],
+        parallel_setting: Optional[str] = None,
         **kwargs
     ) -> BaseTracer:
         """
@@ -70,7 +72,7 @@ class TracerInitializer:
                 model_name=model_name,
                 example_input=example_input,
                 output_path=output_path,
-                mode=mode,
+                parallel_setting=parallel_setting,
                 **kwargs
             )
         
@@ -85,7 +87,7 @@ class TracerInitializer:
                 model_name=model_name,
                 example_input=example_input,
                 output_path=output_path,
-                mode=mode,
+                parallel_setting=parallel_setting,
                 **kwargs
             )
         
@@ -95,14 +97,7 @@ class TracerInitializer:
                     "Megatron-LM framework specified but Megatron-LM is not installed. "
                     "Please install Megatron-LM to use the MegatronTracer."
                 )
-            return MegatronTracer(
-                model=model,
-                model_name=model_name,
-                example_input=example_input,
-                output_path=output_path,
-                mode=mode,
-                **kwargs
-            )
+            return MegatronTracer()
         
         else:
             raise ValueError(f"Unsupported framework: {framework}. "
@@ -123,51 +118,43 @@ def create_tracer(args: Any) -> BaseTracer:
     Returns:
         An appropriate tracer instance for the specified framework
     """
-    # Extract common arguments
-    framework = args.framework
-    model_name = args.model
-    output_path = args.path
-    mode = args.mode
     
-    # We need to handle the model and input creation outside this function
-    # as it depends on the specific model source and framework
-    model = args.model_instance if hasattr(args, 'model_instance') else None
-    example_input = args.example_input if hasattr(args, 'example_input') else None
-    
-    # Framework-specific arguments
-    kwargs = {}
-    
-    # Add PyTorch-specific arguments
-    if framework.lower() == FRAME_NAME_PYTORCH.lower():
+    if args.framework == FRAME_NAME_PYTORCH or args.framework == FRAME_NAME_DEEPSPEED:
+
+        # Extract common arguments
+        framework = args.framework
+        model_name = args.model
+        output_path = {
+            PYTORCH_OPS_PROFILING: args.ops_profiling_output_path,
+            PYTORCH_GRAPH_PROFILING: args.graph_profiling_output_path
+        }
+
+        # We need to handle the model and input creation outside this function
+        # as it depends on the specific model source and framework
+        model = args.model_instance if hasattr(args, 'model_instance') else None
+        example_input = args.example_input if hasattr(args, 'example_input') else None
+        # Note: for now, we only support DDP for PyTorch
+        parallel_setting = PARALLEL_SETTING_DDP if args.pytorch_ddp else None
+
+        # Framework-specific arguments
+        kwargs = {}
+        
         if hasattr(args, 'optimizer'):
             kwargs['optimizer'] = args.optimizer
         if hasattr(args, 'num_repeats'):
             kwargs['num_repeats'] = args.num_repeats
-    
-    # Add DeepSpeed-specific arguments
-    elif framework.lower() == FRAME_NAME_DEEPSPEED.lower():
-        if hasattr(args, 'ds_config'):
-            kwargs['ds_config'] = args.ds_config
-        if hasattr(args, 'local_rank'):
-            kwargs['local_rank'] = args.local_rank
-    
-    # Add Megatron-specific arguments
-    elif framework.lower() == FRAME_NAME_MEGATRON.lower():
-        if hasattr(args, 'tp_size'):
-            kwargs['tp_size'] = args.tp_size
-        if hasattr(args, 'pp_size'):
-            kwargs['pp_size'] = args.pp_size
-        if hasattr(args, 'micro_batch_size'):
-            kwargs['micro_batch_size'] = args.micro_batch_size
-        if hasattr(args, 'global_batch_size'):
-            kwargs['global_batch_size'] = args.global_batch_size
-    
-    return TracerInitializer.create_tracer(
-        framework=framework,
-        model=model,
-        model_name=model_name,
-        example_input=example_input,
-        output_path=output_path,
-        mode=mode,
-        **kwargs
-    ) 
+        if hasattr(args, PYTORCH_ONLY_COMPUTE_WORKLOAD):
+            kwargs[PYTORCH_ONLY_COMPUTE_WORKLOAD] = args.pytorch_only_compute_workload
+        if hasattr(args, 'num_gpus'):
+            kwargs['num_gpus'] = args.num_gpus
+        kwargs['gpu_type'] = setattr(args, 'gpu_type', torch.cuda.get_device_name(0))
+
+        return TracerInitializer.create_tracer(
+            framework=framework,
+            model=model,
+            model_name=model_name,
+            example_input=example_input,
+            output_path=output_path,
+            parallel_setting=parallel_setting,
+            **kwargs
+        )
