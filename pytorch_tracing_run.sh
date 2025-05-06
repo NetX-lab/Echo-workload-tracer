@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # Default parameters
-PROFILING_MODE="pytorch_ops_profiling" #  pytorch_graph_profiling 
+PROFILING_MODE_1="pytorch_ops_profiling"
+PROFILING_MODE_2="pytorch_graph_profiling"
 MODEL="gpt2"
 MODEL_SOURCE="local"
 BASE_PATH="output/"
 BATCH_SIZE=16
 NUM_REPEATS=1
 NUM_GPUS=1
-
 
 
 # Parse command-line arguments
@@ -35,5 +35,5 @@ python main.py \
     --batch_size "$BATCH_SIZE" \
     --num_repeats "$NUM_REPEATS" \
     --num_gpus "$NUM_GPUS" \
-    --$PROFILING_MODE
+    --$PROFILING_MODE_2
     # --pytorch_only_compute_workload \

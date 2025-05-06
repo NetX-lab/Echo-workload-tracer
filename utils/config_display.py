@@ -180,9 +180,9 @@ class PyTorchConfigDisplay(BaseConfigDisplay):
             print(f"  • Graph Path:   {c.GREEN}{graph_path}{c.END}")
             
         if profiling_modes:
-            print(f"  • Profiling:    {', '.join(profiling_modes)}")
+            print(f"  • Profiling Mode:    {', '.join(profiling_modes)}")
         else:
-            print(f"  • Profiling:    {c.YELLOW}None{c.END}")
+            print(f"  • Profiling Mode:    {c.YELLOW}None{c.END}")
 
         output_log_path = getattr(self.args, 'output_log_path', 'Not specified')
         print(f"  • Log Path:     {c.GREEN}{output_log_path}{c.END}")

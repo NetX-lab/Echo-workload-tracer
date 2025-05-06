@@ -113,7 +113,7 @@ def _set_pytorch_args(
     pytorch_group.add_argument(
         '--pytorch_ops_profiling',
         action='store_true',
-        default=True,
+        default=False,
         help='Enable operations profiling for PyTorch workload'
     )
     pytorch_group.add_argument(

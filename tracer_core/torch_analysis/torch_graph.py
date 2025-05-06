@@ -41,7 +41,8 @@ from transformers import PreTrainedModel
 from torch.fx import symbolic_trace
 from transformers.utils.fx import symbolic_trace as transformers_symbolic_trace
 import os
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Union
+import logging
 sys.setrecursionlimit(1500)
 
 
@@ -57,23 +58,31 @@ def forward_hook_fn(
 
 class TorchGraph:
     def __init__(
-        self, module: torch.nn.Module, example: torch.tensor, optimizer: torch.optim, name: str
+        self, module: torch.nn.Module, example: torch.tensor, optimizer: torch.optim, name: str, logger: Optional[logging.Logger] = None
     ) -> None:
         """
-        Initialize the TorchGraph instance with a module, example input, optimizer, and name.
+        Initialize the TorchGraph instance with a module, example input, optimizer, name, and logger.
+        
+        Args:
+            module: PyTorch model to trace
+            example: Example input tensor for the model
+            optimizer: Optimizer for the model
+            name: Name of the model
+            logger: Logger object for logging progress (optional)
         """
         self._module = module
         self._example = example
         self.name = name
         self._optimizer = optimizer
         self._NodeEngineer = Node.NodeEngineer()
+        self.logger = logger or logging.getLogger(__name__)
+        
         if isinstance(module, PreTrainedModel):
             self._symbolic_traced_module = transformers_symbolic_trace(module)
             ShapeProp(self._symbolic_traced_module).propagate(example)
         else:
             self._symbolic_traced_module = symbolic_trace(module)
             ShapeProp(self._symbolic_traced_module).propagate(example)
-
         self._graph_dict = {}
         self._fwd_graph_dict = {}
         # Record node for JSON file, different from _backward_graph_dict
@@ -84,9 +93,18 @@ class TorchGraph:
         self._backward_graph_dict = {}
         self._forward_graph = []
         self._backward_graph = []
+        
+        self.logger.info("Starting forward graph creation...")
         self._create_forward_graph()
+        self.logger.info("Forward graph creation completed")
+        
+        self.logger.info("Starting backward graph creation...")
         self._create_backward_graph()
+        self.logger.info("Backward graph creation completed")
+        
+        self.logger.info("Building optimizer representation...")
         self._build_optimizer()
+        self.logger.info("Optimizer representation built successfully")
 
     def _get_leaf_node(
         self, target: str
@@ -313,11 +331,15 @@ class TorchGraph:
         """
         Create the forward graph representation.
         """
+        node_count = 0
         for node in self._symbolic_traced_module.graph.nodes:
             forward_node = self._create_forward_node(node, self._get_node_op(node))
             self._forward_graph.append(forward_node)
             self._graph_dict[forward_node.name] = forward_node
             self._fwd_graph_dict[forward_node.name] = forward_node
+            node_count += 1
+        
+        self.logger.info(f"Created forward graph with {node_count} nodes")
 
     def _get_bp_node_attr(
         self, node: torch.fx.node.Node
@@ -459,6 +481,22 @@ class TorchGraph:
                 for obj in tensor_obj:
                     self._insert_tensor_obj(obj)
 
+    def _make_backward_hook(self, node):
+        def hook(inputs, outputs):
+            if self._get_bp_node_op(node) not in self._backward_op_dict:
+                self._backward_op_dict[self._get_bp_node_op(node)] = 0
+            else:
+                self._backward_op_dict[self._get_bp_node_op(node)] += 1
+            self._backward_graph_dict[node]['name'] = \
+                self._get_bp_node_op(node) +str(self._backward_op_dict[self._get_bp_node_op(node)])
+
+            self._backward_graph_dict[node]['input_meta'] = \
+                self._get_tensor_meta(outputs)
+            self._backward_graph_dict[node]['output_meta'] = \
+                self._get_tensor_meta(inputs)
+
+            self._grad_fn_list.append(node)
+        return hook
 
     def _register_hook(
         self, var
@@ -542,12 +580,14 @@ class TorchGraph:
         output_example = self._module(self._example)
         if isinstance(self._module, PreTrainedModel):
             if isinstance(output_example, tuple):
-                output_example = output_example[0]
+                output_example = output_example[0]  # adjust this as needed
             if hasattr(output_example, 'pooler_output'):
                 output_example = output_example.pooler_output
             elif hasattr(output_example, 'last_hidden_state'):
                 output_example = output_example.last_hidden_state
+        
         self._register_hook(output_example)
+        self.logger.info(f"Created backward graph with {len(self._backward_graph)} nodes")
 
 
     def _build_optimizer(
@@ -558,10 +598,14 @@ class TorchGraph:
         """
         self._optimizer_params_type = []
         self._optimizer_params_shape = []
+        param_count = 0
         for group in self._optimizer.param_groups:
             for p in group['params']:
                 self._optimizer_params_type.append(str(p.dtype))
                 self._optimizer_params_shape.append((p.shape))
+                param_count += 1
+        
+        self.logger.info(f"Optimizer includes {param_count} parameters")
 
         Optimizer_zero = self._NodeEngineer.construct_node(
             name="optimizer_zero",

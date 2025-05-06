@@ -63,7 +63,8 @@ class PyTorchTracer(BaseTracer):
             self.torch_database = TorchDatabase(model, example_input, model_name, self.timer, optimizer, self.logger)
         
         if self.graph_profiling_path:
-            self.torch_graph = TorchGraph(model, example_input, optimizer, model_name)
+            self.logger.info(f"Initializing TorchGraph for {model_name}")
+            self.torch_graph = TorchGraph(model, example_input, optimizer, model_name, logger=self.logger)
         
         self.logger.info(f"PyTorch tracer initialized for {model_name} with parallel setting: {parallel_setting}")
     
