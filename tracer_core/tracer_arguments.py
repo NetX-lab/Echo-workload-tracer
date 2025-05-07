@@ -148,6 +148,12 @@ def _set_pytorch_args(
         help='Batch size'
     )
     pytorch_group.add_argument(
+        '--sequence_length',
+        type=int,
+        default=512,
+        help='Sequence length for input data'
+    )
+    pytorch_group.add_argument(
         '--num_repeats', 
         type=int, 
         default=1, 

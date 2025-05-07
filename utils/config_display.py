@@ -6,7 +6,7 @@ in a professional and visually appealing format across different frameworks.
 """
 from utils.common import (
     FRAME_NAME_PYTORCH, FRAME_NAME_DEEPSPEED, FRAME_NAME_MEGATRON,
-    PYTORCH_OPS_PROFILING, PYTORCH_GRAPH_PROFILING, PYTORCH_ONLY_COMPUTE_WORKLOAD,
+    PYTORCH_OPS_PROFILING, PYTORCH_GRAPH_PROFILING, PYTORCH_ONLY_COMPUTE_WORKLOAD, PARALLEL_SETTING_DDP,
     Any, Dict, Optional, torch, os, json
 )
 from datetime import datetime
@@ -133,6 +133,7 @@ class BaseConfigDisplay:
                 "model": args.model,
                 "model_source": args.model_source,
                 "batch_size": args.batch_size,
+                "sequence_length": getattr(args, 'sequence_length', 512),
                 "num_repeats": getattr(args, 'num_repeats', None)
             }
             config["hardware_settings"] = {
@@ -141,11 +142,16 @@ class BaseConfigDisplay:
                 "gpu_memory": getattr(args, '_gpu_memory', 'Unknown')
             }
         
-        # Ensure the output directory exists
+        suffix = ""
+        if args.pytorch_ddp:
+            suffix += f"_{PARALLEL_SETTING_DDP}"
+        safe_model_name = args.model.replace('/', '_')
+        
+        config_filename = f"config_{safe_model_name}_bs{args.batch_size}_seq{args.sequence_length}{suffix}.json"
         output_dir = getattr(args, 'output_log_path', 'output/logs')
-
+        
         # Save to file
-        config_path = os.path.join(output_dir, 'config.json')
+        config_path = os.path.join(output_dir, config_filename)
         with open(config_path, 'w') as f:
             json.dump(config, f, indent=4)
 
@@ -192,6 +198,7 @@ class PyTorchConfigDisplay(BaseConfigDisplay):
         print(f"  • Model:        {c.GREEN}{self.args.model}{c.END}")
         print(f"  • Model Source: {c.GREEN}{self.args.model_source}{c.END}")
         print(f"  • Batch Size:   {c.GREEN}{self.args.batch_size}{c.END}")
+        print(f"  • Seq Length:   {c.GREEN}{getattr(self.args, 'sequence_length', 512)}{c.END}")
         
         # Performance settings
         if hasattr(self.args, 'num_repeats'):

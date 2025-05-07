@@ -1,0 +1,29 @@
+{
+    "timestamp": "2025-05-07 15:02:01",
+    "framework_settings": {
+        "framework": "PyTorch",
+        "base_path": "../output/",
+        "num_gpus": 1
+    },
+    "pytorch_settings": {
+        "ddp": false,
+        "compute_only": true,
+        "ops_profiling": true,
+        "graph_profiling": true,
+        "ops_profiling_path": "../output/PyTorch/pytorch_ops_profiling/meta-llama/Llama-2-7b-hf",
+        "graph_profiling_path": "../output/PyTorch/pytorch_graph_profiling/meta-llama/Llama-2-7b-hf",
+        "output_log_path": "../output/logs/PyTorch"
+    },
+    "model_settings": {
+        "model": "meta-llama/Llama-2-7b-hf",
+        "model_source": "huggingface",
+        "batch_size": 2,
+        "sequence_length": 32,
+        "num_repeats": 1
+    },
+    "hardware_settings": {
+        "cuda_available": true,
+        "gpu_name": "NVIDIA A800-SXM4-80GB",
+        "gpu_memory": "79.33"
+    }
+}

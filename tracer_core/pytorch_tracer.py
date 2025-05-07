@@ -44,13 +44,19 @@ class PyTorchTracer(BaseTracer):
             parallel_setting: Parallel training setting (e.g., 'DDP')
             optimizer: Optional optimizer for backward pass tracing
             num_repeats: Number of times to repeat each operation for more accurate timing
-            **kwargs: Additional arguments
+            **kwargs: Additional arguments that can include:
+                batch_size: Batch size used for training
+                sequence_length: Sequence length of input data
         """
         super().__init__(model, model_name, output_path, parallel_setting, **kwargs)
         
         self.example_input = example_input
         self.optimizer = optimizer
         self.num_repeats = num_repeats
+        
+        # Store batch size and sequence length if provided
+        self.batch_size = kwargs.get('batch_size', 0)
+        self.sequence_length = kwargs.get('sequence_length', 0)
         
         # We have two modes of operation based on output path keys
         self.ops_profiling_path = output_path.get(PYTORCH_OPS_PROFILING, '')
@@ -91,16 +97,25 @@ class PyTorchTracer(BaseTracer):
             self.add_event("ops_profiling_start", {"path": self.ops_profiling_path})
             
             output_dir = self.ops_profiling_path
+            
+            # Get batch size and sequence length from kwargs
+            batch_size = getattr(self, 'batch_size', 0)
+            seq_length = getattr(self, 'sequence_length', 0)
+            
+            # Build suffix with batch size, sequence length, and parallel setting if available
+            suffix = f"_bs{batch_size}_seq{seq_length}"
+            if self.parallel_setting is not None:
+                suffix += f"_{self.parallel_setting}"
 
-            # Use TorchDatabase to dump profiling results
-            self.torch_database.dump_fwd_runtime(os.path.join(output_dir, 'forward_ops_profiling.json'))
+            # Use TorchDatabase to dump profiling results with batch size and sequence length info
+            self.torch_database.dump_fwd_runtime(os.path.join(output_dir, f'forward_ops_profiling{suffix}.json'))
             self.logger.info("Ops profiling: forward runtime completed...")
             
             if self.optimizer:
-                self.torch_database.dump_bwd_runtime(os.path.join(output_dir, 'backward_ops_profiling.json'))
+                self.torch_database.dump_bwd_runtime(os.path.join(output_dir, f'backward_ops_profiling{suffix}.json'))
                 self.logger.info("Ops profiling: backward runtime completed...")
             
-            self.torch_database.dump_runtime(os.path.join(output_dir, 'global_ops_profiling.json'))
+            self.torch_database.dump_runtime(os.path.join(output_dir, f'global_ops_profiling{suffix}.json'))
             self.logger.info("Ops profiling: global runtime completed...")
             
             self.add_event("ops_profiling_end", {"path": output_dir})
@@ -111,16 +126,24 @@ class PyTorchTracer(BaseTracer):
             self.add_event("graph_profiling_start", {"path": self.graph_profiling_path})
             
             output_dir = self.graph_profiling_path
+            
+            # Generate suffix if not already defined
+            if not 'suffix' in locals():
+                batch_size = getattr(self, 'batch_size', 0)
+                seq_length = getattr(self, 'sequence_length', 0)
+                suffix = f"_bs{batch_size}_seq{seq_length}"
+                if self.parallel_setting is not None:
+                    suffix += f"_{self.parallel_setting}"
         
-            # Use TorchGraph to dump graph results
-            self.torch_graph.dump_fwd_graph(os.path.join(output_dir, 'forward_graph_profiling.json'))
+            # Use TorchGraph to dump graph results with batch size and sequence length info
+            self.torch_graph.dump_fwd_graph(os.path.join(output_dir, f'forward_graph_profiling{suffix}.json'))
             self.logger.info("Graph profiling: forward graph completed...")
             
             if self.optimizer:
-                self.torch_graph.dump_bwd_graph(os.path.join(output_dir, 'backward_graph_profiling.json'))
+                self.torch_graph.dump_bwd_graph(os.path.join(output_dir, f'backward_graph_profiling{suffix}.json'))
                 self.logger.info("Graph profiling: backward graph completed...")
             
-            self.torch_graph.dump_graph(os.path.join(output_dir, 'global_graph_profiling.json'))
+            self.torch_graph.dump_graph(os.path.join(output_dir, f'global_graph_profiling{suffix}.json'))
             self.logger.info("Graph profiling: global graph completed...")
             
             self.add_event("graph_profiling_end", {"path": output_dir})

@@ -28,13 +28,26 @@ def prepare_model_and_inputs(args: Any) -> None:
         args: Command-line arguments
     """
 
+    # Get sequence length from args or use default
+    sequence_length = getattr(args, 'sequence_length', 512)
+
     # Load model and prepare input tensor
     if args.model_source == MODEL_SOURCE_HUGGINGFACE:
         model, tokenizer = load_huggingface_model(args.model)
-        example_input = tokenizer("Hello, world!", return_tensors="pt", padding=True, truncation=True).input_ids.cuda()
+        
+        # Get the vocabulary size to ensure generated token IDs are valid
+        vocab_size = tokenizer.vocab_size if hasattr(tokenizer, 'vocab_size') else 30000
+        
+        # Generate random input tensor with specified batch_size and sequence_length
+        # This matches the method used for local models
+        example_input = (torch.LongTensor(args.batch_size, sequence_length).random_() % vocab_size).cuda()
+        
+        print(f"Generated random input tensor with shape: {example_input.shape}")
+        
     else:  # Local model
         model = getattr(transformer, args.model)().cuda()
-        example_input = (torch.LongTensor(args.batch_size, 512).random_() % 1000).cuda()
+        # For local models, directly create tensor with specified sequence length
+        example_input = (torch.LongTensor(args.batch_size, sequence_length).random_() % 1000).cuda()
     
     # Create optimizer if needed
     if args.pytorch_ops_profiling or args.pytorch_graph_profiling:

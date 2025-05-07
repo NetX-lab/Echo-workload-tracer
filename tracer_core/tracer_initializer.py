@@ -147,6 +147,10 @@ def create_tracer(args: Any) -> BaseTracer:
             kwargs[PYTORCH_ONLY_COMPUTE_WORKLOAD] = args.pytorch_only_compute_workload
         if hasattr(args, 'num_gpus'):
             kwargs['num_gpus'] = args.num_gpus
+        if hasattr(args, 'sequence_length'):
+            kwargs['sequence_length'] = args.sequence_length
+        if hasattr(args, 'batch_size'):
+            kwargs['batch_size'] = args.batch_size
         kwargs['gpu_type'] = setattr(args, 'gpu_type', torch.cuda.get_device_name(0))
 
         return TracerInitializer.create_tracer(
