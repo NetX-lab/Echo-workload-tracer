@@ -1,50 +1,25 @@
 # Echo Workload Tracer
 
-Echo Workload Tracer is a tool designed for tracing and analyzing the workloads of different deep learning frameworks. Currently, it supports PyTorch, with DeepSpeed and Megatron-LM frameworks under active development.
+Echo Workload Tracer is a tool designed for tracing and analyzing the workloads of different deep learning frameworks. Currently, it supports **PyTorch**, **DeepSpeed** and **Megatron-LM** frameworks.
 
-## Overview
 
-The Echo Workload Tracer focuses on capturing runtime information and generating detailed workload graphs from deep learning training jobs. This data is essential for analyzing performance, optimizing resource utilization, and simulating distributed training at scale.
 
-## Project Structure
-
-```
-.
-├── README.md
-├── tracer_core/                # Core tracing functionality
-│   ├── base.py                 # Base tracer classes
-│   ├── pytorch_tracer.py       # PyTorch-specific tracing
-│   ├── tracer_arguments.py     # Command-line argument handling
-│   ├── tracer_initializer.py   # Tracer initialization
-│   ├── torch_analysis/         # PyTorch analysis utilities
-│   ├── deepspeed_tracer.py     # DeepSpeed tracing (under construction)
-│   └── megatron_tracer.py      # Megatron-LM tracing (under construction)
-├── workload_tracer.py          # Main program entry point
-├── pytorch_tracing_run.sh      # PyTorch tracing script
-└── output/                     # Output directory
-```
-
-## Features
+## Project Overview
+The Echo Workload Tracer focuses on capturing runtime information and generating detailed workload graphs from deep learning training jobs, using only 1 GPU device. This data is essential for analyzing performance, optimizing resource utilization, and simulating distributed training at scale.
 
 - **PyTorch Support**: Comprehensive tracing for PyTorch models, including:
   - Support for HuggingFace Transformers models
-  - Support for torchvision models
-  - Support for custom PyTorch models
-  - Capturing both forward and backward passes
-  - Extracting execution graphs and runtime data
+  - Support for libs (e.g., transformers, torchvision) models and custom PyTorch models
+  - Support training parallel mode like DDP
+  - Capturing both forward and backward passes and extracting execution graphs and runtime data
 
-- **Runtime Profiling**: Collects detailed metrics on model execution
-  - Operation-level timing data
-  - Memory usage patterns
-  - Device utilization statistics
+>  **Note**：We are developing PyTorch-tracer to support PyTorch native training framework torchtitan. Tracers of Deepspeed and Megatron-LM are under active development. We would keep updating these. 
 
-- **Graph Profiling**: Generates visual and data representations of model execution graphs
 
 ## Installation
 
 ### Prerequisites
 - NVIDIA GPU with CUDA support (at least 1 GPU device)
-- Python 3.8 or higher
 
 ### Setup Instructions
 
@@ -56,46 +31,43 @@ The Echo Workload Tracer focuses on capturing runtime information and generating
     export PYTHONPATH=$PYTHONPATH:/path/to/Echo-workload-tracer
     ```
 
-2. **Install dependencies**
+2. **Setup Conda environment**
     ```bash
-    pip install -r requirements.txt
+    conda env create -f environment.yml
+    conda activate simulator_echo
     ```
 
 ## Usage
 
 ### PyTorch Tracing
 
-#### Using the Command Line
+#### Using the Example Script
 
 ```bash
-# Basic usage
-python workload_tracer.py --framework PyTorch --pytorch_ops_profiling --model gpt2 --batch_size 32
+# Basic usage (local model)
+./pytorch_tracing_run.sh --model gpt2 --batch_size 32 --sequence_length 512 --num_gpus 1 --model_source local
 
-# Advanced options
-python workload_tracer.py --framework PyTorch --pytorch_graph_profiling --model bert-base-uncased --model_source huggingface --batch_size 16 --num_repeats 3 --base_path output/
+# Advanced usage (huggingface model)
+./pytorch_tracing_run_huggingface.sh --model deepseek-ai/deepseek-coder-1.3b-base --model_source huggingface --batch_size 2 --sequence_length 256 --num_repeats 5 --num_gpus 1
 ```
 
-#### Using the Shell Script
+### Common Parameters
 
-```bash
-# Basic usage
-./pytorch_tracing_run.sh --model gpt2 --batch_size 32
-
-# Advanced usage
-./pytorch_tracing_run.sh --model resnet50 --model_source huggingface --batch_size 64 --num_repeats 5 --base_path output/
-```
+- `--framework`: Framework to use for workload tracing (choices: 'PyTorch', 'DeepSpeed', 'Megatron-LM', default: 'PyTorch')
+- `--base_path`: Path to save the output (default: 'output/')
+- `--num_gpus`: Number of GPUs to use in training (default: 1)
 
 ### PyTorch Parameters
 
-- `--model`: Model to benchmark
-- `--model_source`: Model source, options: 'huggingface', 'local'
-- `--base_path`: Base output path
-- `--batch_size`: Batch size
-- `--num_repeats`: Number of repetitions
-
-### DeepSpeed and Megatron-LM Support
-
-Support for DeepSpeed and Megatron-LM frameworks is currently under construction. We are actively working on implementing comprehensive tracing capabilities for these frameworks and will update the documentation once they are available.
+- `--model`: Model to benchmark (default: 'gpt2')
+- `--model_source`: Model source (choices: 'huggingface', 'local', default: 'local')
+- `--batch_size`: Batch size for training/inference (default: 16)
+- `--sequence_length`: Sequence length for input data (default: 512)
+- `--num_repeats`: Number of repetitions for averaging results (default: 1)
+- `--pytorch_ops_profiling`: Enable operations profiling for PyTorch workload (flag)
+- `--pytorch_graph_profiling`: Enable graph profiling for PyTorch workload (flag)
+- `--pytorch_ddp`: Enable PyTorch DistributedDataParallel (DDP) mode (flag)
+- `--pytorch_only_compute_workload`: Only trace the compute workload in training (flag)
 
 ## Output
 
@@ -103,11 +75,23 @@ The tracer generates the following outputs:
 
 ```plaintext
 output/
-└── pytorch/
-    ├── workload_graph/
-    │   └── [model_name]/        # Workload graphs
-    └── workload_runtime/        # Runtime data
-        └── [model_name]/        # Model-specific runtime data
+├── logs/
+│   └── PyTorch/
+│       ├── config_[model_name]_bs[batch_size]_seq[seq_length].json   # Tracing config files for each run
+├── PyTorch/
+│   ├── pytorch_graph_profiling/
+│   │   └── [model_source]/
+│   │       └── [model_name]/
+│   │           ├── forward_graph_profiling_bs[batch_size]_seq[seq_length].json  # Forward graph profiling
+│   │           ├── backward_graph_profiling_bs[batch_size]_seq[seq_length].json # Backward graph profiling
+│   │           └── global_graph_profiling_bs[batch_size]_seq[seq_length].json   # Global graph profiling
+│   └── pytorch_ops_profiling/
+│       └── [model_source]/
+│           └── [model_name]/
+│               ├── forward_ops_profiling_bs[batch_size]_seq[seq_length].json    # Forward ops profiling
+│               ├── backward_ops_profiling_bs[batch_size]_seq[seq_length].json   # Backward ops profiling
+│               ├── global_ops_profiling_bs[batch_size]_seq[seq_length].json     # Global ops profiling
+│               └── PyTorch tracer_[timestamp].log                               # Tracer log files
 ```
 
 ## Development Guide
