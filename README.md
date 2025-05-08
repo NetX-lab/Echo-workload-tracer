@@ -64,10 +64,10 @@ The Echo Workload Tracer focuses on capturing runtime information and generating
 - `--batch_size`: Batch size for training/inference (default: 16)
 - `--sequence_length`: Sequence length for input data (default: 512)
 - `--num_repeats`: Number of repetitions for averaging results (default: 1)
-- `--pytorch_ops_profiling`: Enable operations profiling for PyTorch workload (flag)
-- `--pytorch_graph_profiling`: Enable graph profiling for PyTorch workload (flag)
-- `--pytorch_ddp`: Enable PyTorch DistributedDataParallel (DDP) mode (flag)
-- `--pytorch_only_compute_workload`: Only trace the compute workload in training (flag)
+- `--pytorch_ops_profiling`: Enable operations profiling for PyTorch workload
+- `--pytorch_graph_profiling`: Enable graph profiling for PyTorch workload
+- `--pytorch_ddp`: Enable PyTorch DistributedDataParallel (DDP) mode
+- `--pytorch_only_compute_workload`: Only trace the compute workload in training
 
 ## Output
 
