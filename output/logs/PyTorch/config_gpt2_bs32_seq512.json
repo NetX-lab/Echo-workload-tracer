@@ -1,0 +1,29 @@
+{
+    "timestamp": "2025-05-08 15:45:59",
+    "framework_settings": {
+        "framework": "PyTorch",
+        "base_path": "../output/",
+        "num_gpus": 1
+    },
+    "pytorch_settings": {
+        "ddp": false,
+        "compute_only": true,
+        "ops_profiling": false,
+        "graph_profiling": true,
+        "ops_profiling_path": null,
+        "graph_profiling_path": "../output/PyTorch/pytorch_graph_profiling/gpt2",
+        "output_log_path": "../output/logs/PyTorch"
+    },
+    "model_settings": {
+        "model": "gpt2",
+        "model_source": "local",
+        "batch_size": 32,
+        "sequence_length": 512,
+        "num_repeats": 1
+    },
+    "hardware_settings": {
+        "cuda_available": true,
+        "gpu_name": "NVIDIA A800-SXM4-80GB",
+        "gpu_memory": "79.33"
+    }
+}

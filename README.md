@@ -49,6 +49,10 @@ The Echo Workload Tracer focuses on capturing runtime information and generating
 
 # Advanced usage (huggingface model)
 ./pytorch_tracing_run_huggingface.sh --model deepseek-ai/deepseek-coder-1.3b-base --model_source huggingface --batch_size 2 --sequence_length 256 --num_repeats 5 --num_gpus 1
+
+# Advanced usage (ddp mode)
+./pytorch_tracing_run_ddp.sh --model gpt2 --batch_size 1 --sequence_length 512 --num_gpus 2 --model_source local --bucket_cap_mb 10
+
 ```
 
 ### Common Parameters

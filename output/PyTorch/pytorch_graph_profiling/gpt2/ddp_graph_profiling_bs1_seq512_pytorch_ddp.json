@@ -1,0 +1,997 @@
+[
+    {
+        "name": "ddp_pre_0",
+        "op": "ddp_pre",
+        "input_nodes": [
+            "AccumulateGrad0",
+            "AccumulateGrad1",
+            "AccumulateGrad2",
+            "AccumulateGrad3",
+            "AccumulateGrad4"
+        ],
+        "output_nodes": [
+            "ddp_Allreduce_0"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 2364672
+        }
+    },
+    {
+        "name": "ddp_Allreduce_0",
+        "op": "ddp_Allreduce",
+        "input_nodes": [
+            "ddp_pre_0"
+        ],
+        "output_nodes": [
+            "ddp_pre_1"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 2364672
+        }
+    },
+    {
+        "name": "ddp_pre_1",
+        "op": "ddp_pre",
+        "input_nodes": [
+            "AccumulateGrad5",
+            "AccumulateGrad6",
+            "AccumulateGrad7",
+            "AccumulateGrad8",
+            "AccumulateGrad9",
+            "AccumulateGrad10",
+            "ddp_Allreduce_0"
+        ],
+        "output_nodes": [
+            "ddp_Allreduce_1"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 2953728
+        }
+    },
+    {
+        "name": "ddp_Allreduce_1",
+        "op": "ddp_Allreduce",
+        "input_nodes": [
+            "ddp_pre_1"
+        ],
+        "output_nodes": [
+            "ddp_pre_2"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 2953728
+        }
+    },
+    {
+        "name": "ddp_pre_2",
+        "op": "ddp_pre",
+        "input_nodes": [
+            "AccumulateGrad11",
+            "AccumulateGrad12",
+            "AccumulateGrad13",
+            "AccumulateGrad14",
+            "AccumulateGrad15",
+            "AccumulateGrad16",
+            "ddp_Allreduce_1"
+        ],
+        "output_nodes": [
+            "ddp_Allreduce_2"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 4134144
+        }
+    },
+    {
+        "name": "ddp_Allreduce_2",
+        "op": "ddp_Allreduce",
+        "input_nodes": [
+            "ddp_pre_2"
+        ],
+        "output_nodes": [
+            "ddp_pre_3"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 4134144
+        }
+    },
+    {
+        "name": "ddp_pre_3",
+        "op": "ddp_pre",
+        "input_nodes": [
+            "AccumulateGrad17",
+            "AccumulateGrad18",
+            "AccumulateGrad19",
+            "AccumulateGrad20",
+            "AccumulateGrad21",
+            "AccumulateGrad22",
+            "ddp_Allreduce_2"
+        ],
+        "output_nodes": [
+            "ddp_Allreduce_3"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 2953728
+        }
+    },
+    {
+        "name": "ddp_Allreduce_3",
+        "op": "ddp_Allreduce",
+        "input_nodes": [
+            "ddp_pre_3"
+        ],
+        "output_nodes": [
+            "ddp_pre_4"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 2953728
+        }
+    },
+    {
+        "name": "ddp_pre_4",
+        "op": "ddp_pre",
+        "input_nodes": [
+            "AccumulateGrad23",
+            "AccumulateGrad24",
+            "AccumulateGrad25",
+            "AccumulateGrad26",
+            "AccumulateGrad27",
+            "AccumulateGrad28",
+            "ddp_Allreduce_3"
+        ],
+        "output_nodes": [
+            "ddp_Allreduce_4"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 4134144
+        }
+    },
+    {
+        "name": "ddp_Allreduce_4",
+        "op": "ddp_Allreduce",
+        "input_nodes": [
+            "ddp_pre_4"
+        ],
+        "output_nodes": [
+            "ddp_pre_5"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 4134144
+        }
+    },
+    {
+        "name": "ddp_pre_5",
+        "op": "ddp_pre",
+        "input_nodes": [
+            "AccumulateGrad29",
+            "AccumulateGrad30",
+            "AccumulateGrad31",
+            "AccumulateGrad32",
+            "AccumulateGrad33",
+            "AccumulateGrad34",
+            "ddp_Allreduce_4"
+        ],
+        "output_nodes": [
+            "ddp_Allreduce_5"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 2953728
+        }
+    },
+    {
+        "name": "ddp_Allreduce_5",
+        "op": "ddp_Allreduce",
+        "input_nodes": [
+            "ddp_pre_5"
+        ],
+        "output_nodes": [
+            "ddp_pre_6"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 2953728
+        }
+    },
+    {
+        "name": "ddp_pre_6",
+        "op": "ddp_pre",
+        "input_nodes": [
+            "AccumulateGrad35",
+            "AccumulateGrad36",
+            "AccumulateGrad37",
+            "AccumulateGrad38",
+            "AccumulateGrad39",
+            "AccumulateGrad40",
+            "ddp_Allreduce_5"
+        ],
+        "output_nodes": [
+            "ddp_Allreduce_6"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 4134144
+        }
+    },
+    {
+        "name": "ddp_Allreduce_6",
+        "op": "ddp_Allreduce",
+        "input_nodes": [
+            "ddp_pre_6"
+        ],
+        "output_nodes": [
+            "ddp_pre_7"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 4134144
+        }
+    },
+    {
+        "name": "ddp_pre_7",
+        "op": "ddp_pre",
+        "input_nodes": [
+            "AccumulateGrad41",
+            "AccumulateGrad42",
+            "AccumulateGrad43",
+            "AccumulateGrad44",
+            "AccumulateGrad45",
+            "AccumulateGrad46",
+            "ddp_Allreduce_6"
+        ],
+        "output_nodes": [
+            "ddp_Allreduce_7"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 2953728
+        }
+    },
+    {
+        "name": "ddp_Allreduce_7",
+        "op": "ddp_Allreduce",
+        "input_nodes": [
+            "ddp_pre_7"
+        ],
+        "output_nodes": [
+            "ddp_pre_8"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 2953728
+        }
+    },
+    {
+        "name": "ddp_pre_8",
+        "op": "ddp_pre",
+        "input_nodes": [
+            "AccumulateGrad47",
+            "AccumulateGrad48",
+            "AccumulateGrad49",
+            "AccumulateGrad50",
+            "AccumulateGrad51",
+            "AccumulateGrad52",
+            "ddp_Allreduce_7"
+        ],
+        "output_nodes": [
+            "ddp_Allreduce_8"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 4134144
+        }
+    },
+    {
+        "name": "ddp_Allreduce_8",
+        "op": "ddp_Allreduce",
+        "input_nodes": [
+            "ddp_pre_8"
+        ],
+        "output_nodes": [
+            "ddp_pre_9"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 4134144
+        }
+    },
+    {
+        "name": "ddp_pre_9",
+        "op": "ddp_pre",
+        "input_nodes": [
+            "AccumulateGrad53",
+            "AccumulateGrad54",
+            "AccumulateGrad55",
+            "AccumulateGrad56",
+            "AccumulateGrad57",
+            "AccumulateGrad58",
+            "ddp_Allreduce_8"
+        ],
+        "output_nodes": [
+            "ddp_Allreduce_9"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 2953728
+        }
+    },
+    {
+        "name": "ddp_Allreduce_9",
+        "op": "ddp_Allreduce",
+        "input_nodes": [
+            "ddp_pre_9"
+        ],
+        "output_nodes": [
+            "ddp_pre_10"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 2953728
+        }
+    },
+    {
+        "name": "ddp_pre_10",
+        "op": "ddp_pre",
+        "input_nodes": [
+            "AccumulateGrad59",
+            "AccumulateGrad60",
+            "AccumulateGrad61",
+            "AccumulateGrad62",
+            "AccumulateGrad63",
+            "AccumulateGrad64",
+            "ddp_Allreduce_9"
+        ],
+        "output_nodes": [
+            "ddp_Allreduce_10"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 4134144
+        }
+    },
+    {
+        "name": "ddp_Allreduce_10",
+        "op": "ddp_Allreduce",
+        "input_nodes": [
+            "ddp_pre_10"
+        ],
+        "output_nodes": [
+            "ddp_pre_11"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 4134144
+        }
+    },
+    {
+        "name": "ddp_pre_11",
+        "op": "ddp_pre",
+        "input_nodes": [
+            "AccumulateGrad65",
+            "AccumulateGrad66",
+            "AccumulateGrad67",
+            "AccumulateGrad68",
+            "AccumulateGrad69",
+            "AccumulateGrad70",
+            "ddp_Allreduce_10"
+        ],
+        "output_nodes": [
+            "ddp_Allreduce_11"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 2953728
+        }
+    },
+    {
+        "name": "ddp_Allreduce_11",
+        "op": "ddp_Allreduce",
+        "input_nodes": [
+            "ddp_pre_11"
+        ],
+        "output_nodes": [
+            "ddp_pre_12"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 2953728
+        }
+    },
+    {
+        "name": "ddp_pre_12",
+        "op": "ddp_pre",
+        "input_nodes": [
+            "AccumulateGrad71",
+            "AccumulateGrad72",
+            "AccumulateGrad73",
+            "AccumulateGrad74",
+            "AccumulateGrad75",
+            "AccumulateGrad76",
+            "ddp_Allreduce_11"
+        ],
+        "output_nodes": [
+            "ddp_Allreduce_12"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 4134144
+        }
+    },
+    {
+        "name": "ddp_Allreduce_12",
+        "op": "ddp_Allreduce",
+        "input_nodes": [
+            "ddp_pre_12"
+        ],
+        "output_nodes": [
+            "ddp_pre_13"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 4134144
+        }
+    },
+    {
+        "name": "ddp_pre_13",
+        "op": "ddp_pre",
+        "input_nodes": [
+            "AccumulateGrad77",
+            "AccumulateGrad78",
+            "AccumulateGrad79",
+            "AccumulateGrad80",
+            "AccumulateGrad81",
+            "AccumulateGrad82",
+            "ddp_Allreduce_12"
+        ],
+        "output_nodes": [
+            "ddp_Allreduce_13"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 2953728
+        }
+    },
+    {
+        "name": "ddp_Allreduce_13",
+        "op": "ddp_Allreduce",
+        "input_nodes": [
+            "ddp_pre_13"
+        ],
+        "output_nodes": [
+            "ddp_pre_14"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 2953728
+        }
+    },
+    {
+        "name": "ddp_pre_14",
+        "op": "ddp_pre",
+        "input_nodes": [
+            "AccumulateGrad83",
+            "AccumulateGrad84",
+            "AccumulateGrad85",
+            "AccumulateGrad86",
+            "AccumulateGrad87",
+            "AccumulateGrad88",
+            "ddp_Allreduce_13"
+        ],
+        "output_nodes": [
+            "ddp_Allreduce_14"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 4134144
+        }
+    },
+    {
+        "name": "ddp_Allreduce_14",
+        "op": "ddp_Allreduce",
+        "input_nodes": [
+            "ddp_pre_14"
+        ],
+        "output_nodes": [
+            "ddp_pre_15"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 4134144
+        }
+    },
+    {
+        "name": "ddp_pre_15",
+        "op": "ddp_pre",
+        "input_nodes": [
+            "AccumulateGrad89",
+            "AccumulateGrad90",
+            "AccumulateGrad91",
+            "AccumulateGrad92",
+            "AccumulateGrad93",
+            "AccumulateGrad94",
+            "ddp_Allreduce_14"
+        ],
+        "output_nodes": [
+            "ddp_Allreduce_15"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 2953728
+        }
+    },
+    {
+        "name": "ddp_Allreduce_15",
+        "op": "ddp_Allreduce",
+        "input_nodes": [
+            "ddp_pre_15"
+        ],
+        "output_nodes": [
+            "ddp_pre_16"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 2953728
+        }
+    },
+    {
+        "name": "ddp_pre_16",
+        "op": "ddp_pre",
+        "input_nodes": [
+            "AccumulateGrad95",
+            "AccumulateGrad96",
+            "AccumulateGrad97",
+            "AccumulateGrad98",
+            "AccumulateGrad99",
+            "AccumulateGrad100",
+            "ddp_Allreduce_15"
+        ],
+        "output_nodes": [
+            "ddp_Allreduce_16"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 4134144
+        }
+    },
+    {
+        "name": "ddp_Allreduce_16",
+        "op": "ddp_Allreduce",
+        "input_nodes": [
+            "ddp_pre_16"
+        ],
+        "output_nodes": [
+            "ddp_pre_17"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 4134144
+        }
+    },
+    {
+        "name": "ddp_pre_17",
+        "op": "ddp_pre",
+        "input_nodes": [
+            "AccumulateGrad101",
+            "AccumulateGrad102",
+            "AccumulateGrad103",
+            "AccumulateGrad104",
+            "AccumulateGrad105",
+            "AccumulateGrad106",
+            "ddp_Allreduce_16"
+        ],
+        "output_nodes": [
+            "ddp_Allreduce_17"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 2953728
+        }
+    },
+    {
+        "name": "ddp_Allreduce_17",
+        "op": "ddp_Allreduce",
+        "input_nodes": [
+            "ddp_pre_17"
+        ],
+        "output_nodes": [
+            "ddp_pre_18"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 2953728
+        }
+    },
+    {
+        "name": "ddp_pre_18",
+        "op": "ddp_pre",
+        "input_nodes": [
+            "AccumulateGrad107",
+            "AccumulateGrad108",
+            "AccumulateGrad109",
+            "AccumulateGrad110",
+            "AccumulateGrad111",
+            "AccumulateGrad112",
+            "ddp_Allreduce_17"
+        ],
+        "output_nodes": [
+            "ddp_Allreduce_18"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 4134144
+        }
+    },
+    {
+        "name": "ddp_Allreduce_18",
+        "op": "ddp_Allreduce",
+        "input_nodes": [
+            "ddp_pre_18"
+        ],
+        "output_nodes": [
+            "ddp_pre_19"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 4134144
+        }
+    },
+    {
+        "name": "ddp_pre_19",
+        "op": "ddp_pre",
+        "input_nodes": [
+            "AccumulateGrad113",
+            "AccumulateGrad114",
+            "AccumulateGrad115",
+            "AccumulateGrad116",
+            "AccumulateGrad117",
+            "AccumulateGrad118",
+            "ddp_Allreduce_18"
+        ],
+        "output_nodes": [
+            "ddp_Allreduce_19"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 2953728
+        }
+    },
+    {
+        "name": "ddp_Allreduce_19",
+        "op": "ddp_Allreduce",
+        "input_nodes": [
+            "ddp_pre_19"
+        ],
+        "output_nodes": [
+            "ddp_pre_20"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 2953728
+        }
+    },
+    {
+        "name": "ddp_pre_20",
+        "op": "ddp_pre",
+        "input_nodes": [
+            "AccumulateGrad119",
+            "AccumulateGrad120",
+            "AccumulateGrad121",
+            "AccumulateGrad122",
+            "AccumulateGrad123",
+            "AccumulateGrad124",
+            "ddp_Allreduce_19"
+        ],
+        "output_nodes": [
+            "ddp_Allreduce_20"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 4134144
+        }
+    },
+    {
+        "name": "ddp_Allreduce_20",
+        "op": "ddp_Allreduce",
+        "input_nodes": [
+            "ddp_pre_20"
+        ],
+        "output_nodes": [
+            "ddp_pre_21"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 4134144
+        }
+    },
+    {
+        "name": "ddp_pre_21",
+        "op": "ddp_pre",
+        "input_nodes": [
+            "AccumulateGrad125",
+            "AccumulateGrad126",
+            "AccumulateGrad127",
+            "AccumulateGrad128",
+            "AccumulateGrad129",
+            "AccumulateGrad130",
+            "AccumulateGrad131",
+            "AccumulateGrad132",
+            "AccumulateGrad133",
+            "AccumulateGrad134",
+            "ddp_Allreduce_20"
+        ],
+        "output_nodes": [
+            "ddp_Allreduce_21"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 4725504
+        }
+    },
+    {
+        "name": "ddp_Allreduce_21",
+        "op": "ddp_Allreduce",
+        "input_nodes": [
+            "ddp_pre_21"
+        ],
+        "output_nodes": [
+            "ddp_pre_22"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 4725504
+        }
+    },
+    {
+        "name": "ddp_pre_22",
+        "op": "ddp_pre",
+        "input_nodes": [
+            "AccumulateGrad135",
+            "AccumulateGrad136",
+            "AccumulateGrad137",
+            "AccumulateGrad138",
+            "AccumulateGrad139",
+            "AccumulateGrad140",
+            "ddp_Allreduce_21"
+        ],
+        "output_nodes": [
+            "ddp_Allreduce_22"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 4723968
+        }
+    },
+    {
+        "name": "ddp_Allreduce_22",
+        "op": "ddp_Allreduce",
+        "input_nodes": [
+            "ddp_pre_22"
+        ],
+        "output_nodes": [
+            "ddp_pre_23"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 4723968
+        }
+    },
+    {
+        "name": "ddp_pre_23",
+        "op": "ddp_pre",
+        "input_nodes": [
+            "AccumulateGrad141",
+            "AccumulateGrad142",
+            "AccumulateGrad143",
+            "AccumulateGrad144",
+            "AccumulateGrad145",
+            "AccumulateGrad146",
+            "ddp_Allreduce_22"
+        ],
+        "output_nodes": [
+            "ddp_Allreduce_23"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 3149568
+        }
+    },
+    {
+        "name": "ddp_Allreduce_23",
+        "op": "ddp_Allreduce",
+        "input_nodes": [
+            "ddp_pre_23"
+        ],
+        "output_nodes": [
+            "ddp_pre_24"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 3149568
+        }
+    },
+    {
+        "name": "ddp_pre_24",
+        "op": "ddp_pre",
+        "input_nodes": [
+            "AccumulateGrad147",
+            "ddp_Allreduce_23"
+        ],
+        "output_nodes": [
+            "ddp_Allreduce_24"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 38597376
+        }
+    },
+    {
+        "name": "ddp_Allreduce_24",
+        "op": "ddp_Allreduce",
+        "input_nodes": [
+            "ddp_pre_24"
+        ],
+        "output_nodes": [],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "bucket_size": 38597376
+        }
+    }
+]

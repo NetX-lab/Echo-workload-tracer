@@ -123,6 +123,12 @@ def _set_pytorch_args(
         help='Enable graph profiling for PyTorch workload'
     )
     pytorch_group.add_argument(
+        '--bucket_cap_mb',
+        type=int,
+        default=25,
+        help='DDP bucket size in MB for gradient communication'
+    )
+    pytorch_group.add_argument(
         '--model', 
         type=str, 
         default='gpt2', 

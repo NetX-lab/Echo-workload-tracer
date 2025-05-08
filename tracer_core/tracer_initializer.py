@@ -151,6 +151,8 @@ def create_tracer(args: Any) -> BaseTracer:
             kwargs['sequence_length'] = args.sequence_length
         if hasattr(args, 'batch_size'):
             kwargs['batch_size'] = args.batch_size
+        if hasattr(args, 'bucket_cap_mb'):
+            kwargs['bucket_cap_mb'] = args.bucket_cap_mb
         kwargs['gpu_type'] = setattr(args, 'gpu_type', torch.cuda.get_device_name(0))
 
         return TracerInitializer.create_tracer(

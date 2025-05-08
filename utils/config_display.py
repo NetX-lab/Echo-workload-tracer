@@ -107,7 +107,6 @@ class BaseConfigDisplay:
         Args:
             args: The parsed command-line arguments.
         """
-
         # Create config dictionary
         config = {
             "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -122,6 +121,7 @@ class BaseConfigDisplay:
         if args.framework == FRAME_NAME_PYTORCH:
             config["pytorch_settings"] = {
                 "ddp": getattr(args, 'pytorch_ddp', False),
+                "bucket_cap_mb": getattr(args, 'bucket_cap_mb', None),
                 "compute_only": getattr(args, PYTORCH_ONLY_COMPUTE_WORKLOAD, False),
                 "ops_profiling": getattr(args, PYTORCH_OPS_PROFILING, False),
                 "graph_profiling": getattr(args, PYTORCH_GRAPH_PROFILING, False),
@@ -169,6 +169,10 @@ class PyTorchConfigDisplay(BaseConfigDisplay):
         # Display DDP and compute workload settings
         ddp_status = "Enabled" if getattr(self.args, 'pytorch_ddp', False) else "Disabled"
         print(f"  • DDP:          {c.GREEN}{ddp_status}{c.END}")
+        
+        if getattr(self.args, 'pytorch_ddp', False):
+            bucket_cap_mb = getattr(self.args, 'bucket_cap_mb', None)
+            print(f"  • Bucket Cap:   {c.GREEN}{bucket_cap_mb} MB{c.END}")
         
         compute_only = "Yes" if getattr(self.args, PYTORCH_ONLY_COMPUTE_WORKLOAD, False) else "No"
         print(f"  • Compute Only: {c.GREEN}{compute_only}{c.END}")
