@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-05-09 07:50:27",
+    "timestamp": "2025-05-09 07:57:15",
     "framework_settings": {
         "framework": "PyTorch",
         "base_path": "../output/",
@@ -9,15 +9,15 @@
         "ddp": false,
         "bucket_cap_mb": 25,
         "compute_only": true,
-        "ops_profiling": false,
+        "ops_profiling": true,
         "graph_profiling": true,
-        "ops_profiling_path": null,
-        "graph_profiling_path": "../output/PyTorch/pytorch_graph_profiling/gpt2",
+        "ops_profiling_path": "../output/PyTorch/pytorch_ops_profiling/bert-base-uncased",
+        "graph_profiling_path": "../output/PyTorch/pytorch_graph_profiling/bert-base-uncased",
         "output_log_path": "../output/logs/PyTorch"
     },
     "model_settings": {
-        "model": "gpt2",
-        "model_source": "local",
+        "model": "bert-base-uncased",
+        "model_source": "huggingface",
         "batch_size": 32,
         "sequence_length": 512,
         "num_repeats": 1

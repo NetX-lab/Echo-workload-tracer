@@ -32,11 +32,12 @@ _create_backward_graph()
 import json
 import torch
 import torch.fx
+import sys
 from torch.fx.node import Node, map_aggregate
+sys.path.append('/root/Echo-workload-tracer/tracer_core/torch_analysis')
 from shape_prop import ShapeProp, TensorMetadata, extract_tensor_metadata
 from typename import typename
-import Node
-import sys
+from graph_node import Node, NodeEngineer
 from transformers import PreTrainedModel
 from torch.fx import symbolic_trace
 from transformers.utils.fx import symbolic_trace as transformers_symbolic_trace
@@ -74,7 +75,7 @@ class TorchGraph:
         self._example = example
         self.name = name
         self._optimizer = optimizer
-        self._NodeEngineer = Node.NodeEngineer()
+        self._NodeEngineer = NodeEngineer()
         self.logger = logger or logging.getLogger(__name__)
         
         if isinstance(module, PreTrainedModel):

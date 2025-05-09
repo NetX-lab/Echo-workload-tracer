@@ -12,6 +12,7 @@ from utils.common import (
     MODEL_SOURCE_HUGGINGFACE, MODEL_SOURCE_LOCAL,
     Any, ensure_dir_exists, AutoModel, AutoTokenizer
 )
+sys.path.append('/root/Echo-workload-tracer/tracer_core/torch_analysis')
 # 项目内部导入
 from tracer_core.tracer_arguments import get_parser, setup_framework_args, filter_args
 from torch_analysis.torch_database import TorchDatabase

@@ -33,7 +33,7 @@ The Echo Workload Tracer focuses on capturing runtime information and generating
 
 2. **Setup Conda environment**
     ```bash
-    conda env create -f environment.yml
+    conda env create -f environment.yaml
     conda activate simulator_echo
     ```
 

@@ -2,7 +2,7 @@ import json
 import torch
 import torchvision
 import sys
-sys.path.append('/root/Echo-workload-tracer/torch_analysis')
+sys.path.append('/root/Echo-workload-tracer/tracer_core/torch_analysis')
 from torch_analysis.torch_graph import TorchGraph
 import torch.optim as optim
 import argparse

@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-05-08 16:14:52",
+    "timestamp": "2025-05-09 07:58:26",
     "framework_settings": {
         "framework": "PyTorch",
         "base_path": "../output/",
@@ -24,7 +24,7 @@
     },
     "hardware_settings": {
         "cuda_available": true,
-        "gpu_name": "NVIDIA A800-SXM4-80GB",
-        "gpu_memory": "79.33"
+        "gpu_name": "NVIDIA A100-PCIE-40GB",
+        "gpu_memory": "39.50"
     }
 }

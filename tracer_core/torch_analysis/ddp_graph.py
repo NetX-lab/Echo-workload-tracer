@@ -8,7 +8,7 @@ from torch.fx.node import Node, map_aggregate
 from torch.fx import symbolic_trace
 from shape_prop import ShapeProp, TensorMetadata, extract_tensor_metadata
 from typename import typename
-import Node
+from graph_node import Node
 from transformers import PreTrainedModel
 from transformers.utils.fx import symbolic_trace as transformers_symbolic_trace
 from .torch_graph import TorchGraph
