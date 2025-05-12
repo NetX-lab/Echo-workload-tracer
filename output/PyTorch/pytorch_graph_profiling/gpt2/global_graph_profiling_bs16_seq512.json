@@ -32443,7 +32443,7 @@
         ],
         "output_nodes": [
             "AddBackward03",
-            "ViewBackward01"
+            "NativeDropoutBackward00"
         ],
         "input_types": [
             "torch.float32"
@@ -32473,10 +32473,44 @@
         ]
     },
     {
+        "name": "NativeDropoutBackward00",
+        "op": "NativeDropoutBackward0",
+        "input_nodes": [
+            "AddBackward00"
+        ],
+        "output_nodes": [
+            "ViewBackward01"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "attrs": {
+            "p": 0.1,
+            "inplace": false
+        }
+    },
+    {
         "name": "ViewBackward01",
         "op": "ViewBackward0",
         "input_nodes": [
-            "AddBackward00"
+            "NativeDropoutBackward00"
         ],
         "output_nodes": [
             "AddmmBackward00"
@@ -33098,7 +33132,7 @@
             "NativeLayerNormBackward01"
         ],
         "output_nodes": [
-            "ViewBackward05",
+            "NativeDropoutBackward01",
             "AddBackward04"
         ],
         "input_types": [
@@ -33129,10 +33163,44 @@
         ]
     },
     {
+        "name": "NativeDropoutBackward01",
+        "op": "NativeDropoutBackward0",
+        "input_nodes": [
+            "AddBackward03"
+        ],
+        "output_nodes": [
+            "ViewBackward05"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "attrs": {
+            "p": 0.1,
+            "inplace": false
+        }
+    },
+    {
         "name": "ViewBackward05",
         "op": "ViewBackward0",
         "input_nodes": [
-            "AddBackward03"
+            "NativeDropoutBackward01"
         ],
         "output_nodes": [
             "AddmmBackward02"
@@ -33559,7 +33627,7 @@
             "ViewBackward08"
         ],
         "output_nodes": [
-            "SoftmaxBackward00"
+            "NativeDropoutBackward02"
         ],
         "input_types": [
             "torch.float32"
@@ -33585,13 +33653,13 @@
         ]
     },
     {
-        "name": "SoftmaxBackward00",
-        "op": "SoftmaxBackward0",
+        "name": "NativeDropoutBackward02",
+        "op": "NativeDropoutBackward0",
         "input_nodes": [
             "ExpandBackward01"
         ],
         "output_nodes": [
-            "WhereBackward00"
+            "SoftmaxBackward00"
         ],
         "input_types": [
             "torch.float32"
@@ -33619,6 +33687,38 @@
             "p": 0.1,
             "inplace": false
         }
+    },
+    {
+        "name": "SoftmaxBackward00",
+        "op": "SoftmaxBackward0",
+        "input_nodes": [
+            "NativeDropoutBackward02"
+        ],
+        "output_nodes": [
+            "WhereBackward00"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                12,
+                512,
+                512
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                12,
+                512,
+                512
+            ]
+        ]
     },
     {
         "name": "WhereBackward00",
@@ -34438,7 +34538,7 @@
         ],
         "output_nodes": [
             "AddBackward07",
-            "ViewBackward014"
+            "NativeDropoutBackward03"
         ],
         "input_types": [
             "torch.float32"
@@ -34468,10 +34568,44 @@
         ]
     },
     {
+        "name": "NativeDropoutBackward03",
+        "op": "NativeDropoutBackward0",
+        "input_nodes": [
+            "AddBackward04"
+        ],
+        "output_nodes": [
+            "ViewBackward014"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "attrs": {
+            "p": 0.1,
+            "inplace": false
+        }
+    },
+    {
         "name": "ViewBackward014",
         "op": "ViewBackward0",
         "input_nodes": [
-            "AddBackward04"
+            "NativeDropoutBackward03"
         ],
         "output_nodes": [
             "AddmmBackward04"
@@ -35093,7 +35227,7 @@
             "NativeLayerNormBackward03"
         ],
         "output_nodes": [
-            "ViewBackward018",
+            "NativeDropoutBackward04",
             "AddBackward08"
         ],
         "input_types": [
@@ -35124,10 +35258,44 @@
         ]
     },
     {
+        "name": "NativeDropoutBackward04",
+        "op": "NativeDropoutBackward0",
+        "input_nodes": [
+            "AddBackward07"
+        ],
+        "output_nodes": [
+            "ViewBackward018"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "attrs": {
+            "p": 0.1,
+            "inplace": false
+        }
+    },
+    {
         "name": "ViewBackward018",
         "op": "ViewBackward0",
         "input_nodes": [
-            "AddBackward07"
+            "NativeDropoutBackward04"
         ],
         "output_nodes": [
             "AddmmBackward06"
@@ -35554,7 +35722,7 @@
             "ViewBackward021"
         ],
         "output_nodes": [
-            "SoftmaxBackward01"
+            "NativeDropoutBackward05"
         ],
         "input_types": [
             "torch.float32"
@@ -35580,13 +35748,13 @@
         ]
     },
     {
-        "name": "SoftmaxBackward01",
-        "op": "SoftmaxBackward0",
+        "name": "NativeDropoutBackward05",
+        "op": "NativeDropoutBackward0",
         "input_nodes": [
             "ExpandBackward05"
         ],
         "output_nodes": [
-            "WhereBackward01"
+            "SoftmaxBackward01"
         ],
         "input_types": [
             "torch.float32"
@@ -35614,6 +35782,38 @@
             "p": 0.1,
             "inplace": false
         }
+    },
+    {
+        "name": "SoftmaxBackward01",
+        "op": "SoftmaxBackward0",
+        "input_nodes": [
+            "NativeDropoutBackward05"
+        ],
+        "output_nodes": [
+            "WhereBackward01"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                12,
+                512,
+                512
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                12,
+                512,
+                512
+            ]
+        ]
     },
     {
         "name": "WhereBackward01",
@@ -36433,7 +36633,7 @@
         ],
         "output_nodes": [
             "AddBackward011",
-            "ViewBackward027"
+            "NativeDropoutBackward06"
         ],
         "input_types": [
             "torch.float32"
@@ -36463,10 +36663,44 @@
         ]
     },
     {
+        "name": "NativeDropoutBackward06",
+        "op": "NativeDropoutBackward0",
+        "input_nodes": [
+            "AddBackward08"
+        ],
+        "output_nodes": [
+            "ViewBackward027"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "attrs": {
+            "p": 0.1,
+            "inplace": false
+        }
+    },
+    {
         "name": "ViewBackward027",
         "op": "ViewBackward0",
         "input_nodes": [
-            "AddBackward08"
+            "NativeDropoutBackward06"
         ],
         "output_nodes": [
             "AddmmBackward08"
@@ -37088,7 +37322,7 @@
             "NativeLayerNormBackward05"
         ],
         "output_nodes": [
-            "ViewBackward031",
+            "NativeDropoutBackward07",
             "AddBackward012"
         ],
         "input_types": [
@@ -37119,10 +37353,44 @@
         ]
     },
     {
+        "name": "NativeDropoutBackward07",
+        "op": "NativeDropoutBackward0",
+        "input_nodes": [
+            "AddBackward011"
+        ],
+        "output_nodes": [
+            "ViewBackward031"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "attrs": {
+            "p": 0.1,
+            "inplace": false
+        }
+    },
+    {
         "name": "ViewBackward031",
         "op": "ViewBackward0",
         "input_nodes": [
-            "AddBackward011"
+            "NativeDropoutBackward07"
         ],
         "output_nodes": [
             "AddmmBackward010"
@@ -37549,7 +37817,7 @@
             "ViewBackward034"
         ],
         "output_nodes": [
-            "SoftmaxBackward02"
+            "NativeDropoutBackward08"
         ],
         "input_types": [
             "torch.float32"
@@ -37575,13 +37843,13 @@
         ]
     },
     {
-        "name": "SoftmaxBackward02",
-        "op": "SoftmaxBackward0",
+        "name": "NativeDropoutBackward08",
+        "op": "NativeDropoutBackward0",
         "input_nodes": [
             "ExpandBackward09"
         ],
         "output_nodes": [
-            "WhereBackward02"
+            "SoftmaxBackward02"
         ],
         "input_types": [
             "torch.float32"
@@ -37609,6 +37877,38 @@
             "p": 0.1,
             "inplace": false
         }
+    },
+    {
+        "name": "SoftmaxBackward02",
+        "op": "SoftmaxBackward0",
+        "input_nodes": [
+            "NativeDropoutBackward08"
+        ],
+        "output_nodes": [
+            "WhereBackward02"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                12,
+                512,
+                512
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                12,
+                512,
+                512
+            ]
+        ]
     },
     {
         "name": "WhereBackward02",
@@ -38428,7 +38728,7 @@
         ],
         "output_nodes": [
             "AddBackward015",
-            "ViewBackward040"
+            "NativeDropoutBackward09"
         ],
         "input_types": [
             "torch.float32"
@@ -38458,10 +38758,44 @@
         ]
     },
     {
+        "name": "NativeDropoutBackward09",
+        "op": "NativeDropoutBackward0",
+        "input_nodes": [
+            "AddBackward012"
+        ],
+        "output_nodes": [
+            "ViewBackward040"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "attrs": {
+            "p": 0.1,
+            "inplace": false
+        }
+    },
+    {
         "name": "ViewBackward040",
         "op": "ViewBackward0",
         "input_nodes": [
-            "AddBackward012"
+            "NativeDropoutBackward09"
         ],
         "output_nodes": [
             "AddmmBackward012"
@@ -39083,7 +39417,7 @@
             "NativeLayerNormBackward07"
         ],
         "output_nodes": [
-            "ViewBackward044",
+            "NativeDropoutBackward010",
             "AddBackward016"
         ],
         "input_types": [
@@ -39114,10 +39448,44 @@
         ]
     },
     {
+        "name": "NativeDropoutBackward010",
+        "op": "NativeDropoutBackward0",
+        "input_nodes": [
+            "AddBackward015"
+        ],
+        "output_nodes": [
+            "ViewBackward044"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "attrs": {
+            "p": 0.1,
+            "inplace": false
+        }
+    },
+    {
         "name": "ViewBackward044",
         "op": "ViewBackward0",
         "input_nodes": [
-            "AddBackward015"
+            "NativeDropoutBackward010"
         ],
         "output_nodes": [
             "AddmmBackward014"
@@ -39544,7 +39912,7 @@
             "ViewBackward047"
         ],
         "output_nodes": [
-            "SoftmaxBackward03"
+            "NativeDropoutBackward011"
         ],
         "input_types": [
             "torch.float32"
@@ -39570,13 +39938,13 @@
         ]
     },
     {
-        "name": "SoftmaxBackward03",
-        "op": "SoftmaxBackward0",
+        "name": "NativeDropoutBackward011",
+        "op": "NativeDropoutBackward0",
         "input_nodes": [
             "ExpandBackward013"
         ],
         "output_nodes": [
-            "WhereBackward03"
+            "SoftmaxBackward03"
         ],
         "input_types": [
             "torch.float32"
@@ -39604,6 +39972,38 @@
             "p": 0.1,
             "inplace": false
         }
+    },
+    {
+        "name": "SoftmaxBackward03",
+        "op": "SoftmaxBackward0",
+        "input_nodes": [
+            "NativeDropoutBackward011"
+        ],
+        "output_nodes": [
+            "WhereBackward03"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                12,
+                512,
+                512
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                12,
+                512,
+                512
+            ]
+        ]
     },
     {
         "name": "WhereBackward03",
@@ -40423,7 +40823,7 @@
         ],
         "output_nodes": [
             "AddBackward019",
-            "ViewBackward053"
+            "NativeDropoutBackward012"
         ],
         "input_types": [
             "torch.float32"
@@ -40453,10 +40853,44 @@
         ]
     },
     {
+        "name": "NativeDropoutBackward012",
+        "op": "NativeDropoutBackward0",
+        "input_nodes": [
+            "AddBackward016"
+        ],
+        "output_nodes": [
+            "ViewBackward053"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "attrs": {
+            "p": 0.1,
+            "inplace": false
+        }
+    },
+    {
         "name": "ViewBackward053",
         "op": "ViewBackward0",
         "input_nodes": [
-            "AddBackward016"
+            "NativeDropoutBackward012"
         ],
         "output_nodes": [
             "AddmmBackward016"
@@ -41078,7 +41512,7 @@
             "NativeLayerNormBackward09"
         ],
         "output_nodes": [
-            "ViewBackward057",
+            "NativeDropoutBackward013",
             "AddBackward020"
         ],
         "input_types": [
@@ -41109,10 +41543,44 @@
         ]
     },
     {
+        "name": "NativeDropoutBackward013",
+        "op": "NativeDropoutBackward0",
+        "input_nodes": [
+            "AddBackward019"
+        ],
+        "output_nodes": [
+            "ViewBackward057"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "attrs": {
+            "p": 0.1,
+            "inplace": false
+        }
+    },
+    {
         "name": "ViewBackward057",
         "op": "ViewBackward0",
         "input_nodes": [
-            "AddBackward019"
+            "NativeDropoutBackward013"
         ],
         "output_nodes": [
             "AddmmBackward018"
@@ -41539,7 +42007,7 @@
             "ViewBackward060"
         ],
         "output_nodes": [
-            "SoftmaxBackward04"
+            "NativeDropoutBackward014"
         ],
         "input_types": [
             "torch.float32"
@@ -41565,13 +42033,13 @@
         ]
     },
     {
-        "name": "SoftmaxBackward04",
-        "op": "SoftmaxBackward0",
+        "name": "NativeDropoutBackward014",
+        "op": "NativeDropoutBackward0",
         "input_nodes": [
             "ExpandBackward017"
         ],
         "output_nodes": [
-            "WhereBackward04"
+            "SoftmaxBackward04"
         ],
         "input_types": [
             "torch.float32"
@@ -41599,6 +42067,38 @@
             "p": 0.1,
             "inplace": false
         }
+    },
+    {
+        "name": "SoftmaxBackward04",
+        "op": "SoftmaxBackward0",
+        "input_nodes": [
+            "NativeDropoutBackward014"
+        ],
+        "output_nodes": [
+            "WhereBackward04"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                12,
+                512,
+                512
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                12,
+                512,
+                512
+            ]
+        ]
     },
     {
         "name": "WhereBackward04",
@@ -42418,7 +42918,7 @@
         ],
         "output_nodes": [
             "AddBackward023",
-            "ViewBackward066"
+            "NativeDropoutBackward015"
         ],
         "input_types": [
             "torch.float32"
@@ -42448,10 +42948,44 @@
         ]
     },
     {
+        "name": "NativeDropoutBackward015",
+        "op": "NativeDropoutBackward0",
+        "input_nodes": [
+            "AddBackward020"
+        ],
+        "output_nodes": [
+            "ViewBackward066"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "attrs": {
+            "p": 0.1,
+            "inplace": false
+        }
+    },
+    {
         "name": "ViewBackward066",
         "op": "ViewBackward0",
         "input_nodes": [
-            "AddBackward020"
+            "NativeDropoutBackward015"
         ],
         "output_nodes": [
             "AddmmBackward020"
@@ -43073,7 +43607,7 @@
             "NativeLayerNormBackward011"
         ],
         "output_nodes": [
-            "ViewBackward070",
+            "NativeDropoutBackward016",
             "AddBackward024"
         ],
         "input_types": [
@@ -43104,10 +43638,44 @@
         ]
     },
     {
+        "name": "NativeDropoutBackward016",
+        "op": "NativeDropoutBackward0",
+        "input_nodes": [
+            "AddBackward023"
+        ],
+        "output_nodes": [
+            "ViewBackward070"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "attrs": {
+            "p": 0.1,
+            "inplace": false
+        }
+    },
+    {
         "name": "ViewBackward070",
         "op": "ViewBackward0",
         "input_nodes": [
-            "AddBackward023"
+            "NativeDropoutBackward016"
         ],
         "output_nodes": [
             "AddmmBackward022"
@@ -43534,7 +44102,7 @@
             "ViewBackward073"
         ],
         "output_nodes": [
-            "SoftmaxBackward05"
+            "NativeDropoutBackward017"
         ],
         "input_types": [
             "torch.float32"
@@ -43560,13 +44128,13 @@
         ]
     },
     {
-        "name": "SoftmaxBackward05",
-        "op": "SoftmaxBackward0",
+        "name": "NativeDropoutBackward017",
+        "op": "NativeDropoutBackward0",
         "input_nodes": [
             "ExpandBackward021"
         ],
         "output_nodes": [
-            "WhereBackward05"
+            "SoftmaxBackward05"
         ],
         "input_types": [
             "torch.float32"
@@ -43594,6 +44162,38 @@
             "p": 0.1,
             "inplace": false
         }
+    },
+    {
+        "name": "SoftmaxBackward05",
+        "op": "SoftmaxBackward0",
+        "input_nodes": [
+            "NativeDropoutBackward017"
+        ],
+        "output_nodes": [
+            "WhereBackward05"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                12,
+                512,
+                512
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                12,
+                512,
+                512
+            ]
+        ]
     },
     {
         "name": "WhereBackward05",
@@ -44413,7 +45013,7 @@
         ],
         "output_nodes": [
             "AddBackward027",
-            "ViewBackward079"
+            "NativeDropoutBackward018"
         ],
         "input_types": [
             "torch.float32"
@@ -44443,10 +45043,44 @@
         ]
     },
     {
+        "name": "NativeDropoutBackward018",
+        "op": "NativeDropoutBackward0",
+        "input_nodes": [
+            "AddBackward024"
+        ],
+        "output_nodes": [
+            "ViewBackward079"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "attrs": {
+            "p": 0.1,
+            "inplace": false
+        }
+    },
+    {
         "name": "ViewBackward079",
         "op": "ViewBackward0",
         "input_nodes": [
-            "AddBackward024"
+            "NativeDropoutBackward018"
         ],
         "output_nodes": [
             "AddmmBackward024"
@@ -45068,7 +45702,7 @@
             "NativeLayerNormBackward013"
         ],
         "output_nodes": [
-            "ViewBackward083",
+            "NativeDropoutBackward019",
             "AddBackward028"
         ],
         "input_types": [
@@ -45099,10 +45733,44 @@
         ]
     },
     {
+        "name": "NativeDropoutBackward019",
+        "op": "NativeDropoutBackward0",
+        "input_nodes": [
+            "AddBackward027"
+        ],
+        "output_nodes": [
+            "ViewBackward083"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "attrs": {
+            "p": 0.1,
+            "inplace": false
+        }
+    },
+    {
         "name": "ViewBackward083",
         "op": "ViewBackward0",
         "input_nodes": [
-            "AddBackward027"
+            "NativeDropoutBackward019"
         ],
         "output_nodes": [
             "AddmmBackward026"
@@ -45529,7 +46197,7 @@
             "ViewBackward086"
         ],
         "output_nodes": [
-            "SoftmaxBackward06"
+            "NativeDropoutBackward020"
         ],
         "input_types": [
             "torch.float32"
@@ -45555,13 +46223,13 @@
         ]
     },
     {
-        "name": "SoftmaxBackward06",
-        "op": "SoftmaxBackward0",
+        "name": "NativeDropoutBackward020",
+        "op": "NativeDropoutBackward0",
         "input_nodes": [
             "ExpandBackward025"
         ],
         "output_nodes": [
-            "WhereBackward06"
+            "SoftmaxBackward06"
         ],
         "input_types": [
             "torch.float32"
@@ -45589,6 +46257,38 @@
             "p": 0.1,
             "inplace": false
         }
+    },
+    {
+        "name": "SoftmaxBackward06",
+        "op": "SoftmaxBackward0",
+        "input_nodes": [
+            "NativeDropoutBackward020"
+        ],
+        "output_nodes": [
+            "WhereBackward06"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                12,
+                512,
+                512
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                12,
+                512,
+                512
+            ]
+        ]
     },
     {
         "name": "WhereBackward06",
@@ -46408,7 +47108,7 @@
         ],
         "output_nodes": [
             "AddBackward031",
-            "ViewBackward092"
+            "NativeDropoutBackward021"
         ],
         "input_types": [
             "torch.float32"
@@ -46438,10 +47138,44 @@
         ]
     },
     {
+        "name": "NativeDropoutBackward021",
+        "op": "NativeDropoutBackward0",
+        "input_nodes": [
+            "AddBackward028"
+        ],
+        "output_nodes": [
+            "ViewBackward092"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "attrs": {
+            "p": 0.1,
+            "inplace": false
+        }
+    },
+    {
         "name": "ViewBackward092",
         "op": "ViewBackward0",
         "input_nodes": [
-            "AddBackward028"
+            "NativeDropoutBackward021"
         ],
         "output_nodes": [
             "AddmmBackward028"
@@ -47063,7 +47797,7 @@
             "NativeLayerNormBackward015"
         ],
         "output_nodes": [
-            "ViewBackward096",
+            "NativeDropoutBackward022",
             "AddBackward032"
         ],
         "input_types": [
@@ -47094,10 +47828,44 @@
         ]
     },
     {
+        "name": "NativeDropoutBackward022",
+        "op": "NativeDropoutBackward0",
+        "input_nodes": [
+            "AddBackward031"
+        ],
+        "output_nodes": [
+            "ViewBackward096"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "attrs": {
+            "p": 0.1,
+            "inplace": false
+        }
+    },
+    {
         "name": "ViewBackward096",
         "op": "ViewBackward0",
         "input_nodes": [
-            "AddBackward031"
+            "NativeDropoutBackward022"
         ],
         "output_nodes": [
             "AddmmBackward030"
@@ -47524,7 +48292,7 @@
             "ViewBackward099"
         ],
         "output_nodes": [
-            "SoftmaxBackward07"
+            "NativeDropoutBackward023"
         ],
         "input_types": [
             "torch.float32"
@@ -47550,13 +48318,13 @@
         ]
     },
     {
-        "name": "SoftmaxBackward07",
-        "op": "SoftmaxBackward0",
+        "name": "NativeDropoutBackward023",
+        "op": "NativeDropoutBackward0",
         "input_nodes": [
             "ExpandBackward029"
         ],
         "output_nodes": [
-            "WhereBackward07"
+            "SoftmaxBackward07"
         ],
         "input_types": [
             "torch.float32"
@@ -47584,6 +48352,38 @@
             "p": 0.1,
             "inplace": false
         }
+    },
+    {
+        "name": "SoftmaxBackward07",
+        "op": "SoftmaxBackward0",
+        "input_nodes": [
+            "NativeDropoutBackward023"
+        ],
+        "output_nodes": [
+            "WhereBackward07"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                12,
+                512,
+                512
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                12,
+                512,
+                512
+            ]
+        ]
     },
     {
         "name": "WhereBackward07",
@@ -48403,7 +49203,7 @@
         ],
         "output_nodes": [
             "AddBackward035",
-            "ViewBackward0105"
+            "NativeDropoutBackward024"
         ],
         "input_types": [
             "torch.float32"
@@ -48433,10 +49233,44 @@
         ]
     },
     {
+        "name": "NativeDropoutBackward024",
+        "op": "NativeDropoutBackward0",
+        "input_nodes": [
+            "AddBackward032"
+        ],
+        "output_nodes": [
+            "ViewBackward0105"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "attrs": {
+            "p": 0.1,
+            "inplace": false
+        }
+    },
+    {
         "name": "ViewBackward0105",
         "op": "ViewBackward0",
         "input_nodes": [
-            "AddBackward032"
+            "NativeDropoutBackward024"
         ],
         "output_nodes": [
             "AddmmBackward032"
@@ -49058,7 +49892,7 @@
             "NativeLayerNormBackward017"
         ],
         "output_nodes": [
-            "ViewBackward0109",
+            "NativeDropoutBackward025",
             "AddBackward036"
         ],
         "input_types": [
@@ -49089,10 +49923,44 @@
         ]
     },
     {
+        "name": "NativeDropoutBackward025",
+        "op": "NativeDropoutBackward0",
+        "input_nodes": [
+            "AddBackward035"
+        ],
+        "output_nodes": [
+            "ViewBackward0109"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "attrs": {
+            "p": 0.1,
+            "inplace": false
+        }
+    },
+    {
         "name": "ViewBackward0109",
         "op": "ViewBackward0",
         "input_nodes": [
-            "AddBackward035"
+            "NativeDropoutBackward025"
         ],
         "output_nodes": [
             "AddmmBackward034"
@@ -49519,7 +50387,7 @@
             "ViewBackward0112"
         ],
         "output_nodes": [
-            "SoftmaxBackward08"
+            "NativeDropoutBackward026"
         ],
         "input_types": [
             "torch.float32"
@@ -49545,13 +50413,13 @@
         ]
     },
     {
-        "name": "SoftmaxBackward08",
-        "op": "SoftmaxBackward0",
+        "name": "NativeDropoutBackward026",
+        "op": "NativeDropoutBackward0",
         "input_nodes": [
             "ExpandBackward033"
         ],
         "output_nodes": [
-            "WhereBackward08"
+            "SoftmaxBackward08"
         ],
         "input_types": [
             "torch.float32"
@@ -49579,6 +50447,38 @@
             "p": 0.1,
             "inplace": false
         }
+    },
+    {
+        "name": "SoftmaxBackward08",
+        "op": "SoftmaxBackward0",
+        "input_nodes": [
+            "NativeDropoutBackward026"
+        ],
+        "output_nodes": [
+            "WhereBackward08"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                12,
+                512,
+                512
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                12,
+                512,
+                512
+            ]
+        ]
     },
     {
         "name": "WhereBackward08",
@@ -50398,7 +51298,7 @@
         ],
         "output_nodes": [
             "AddBackward039",
-            "ViewBackward0118"
+            "NativeDropoutBackward027"
         ],
         "input_types": [
             "torch.float32"
@@ -50428,10 +51328,44 @@
         ]
     },
     {
+        "name": "NativeDropoutBackward027",
+        "op": "NativeDropoutBackward0",
+        "input_nodes": [
+            "AddBackward036"
+        ],
+        "output_nodes": [
+            "ViewBackward0118"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "attrs": {
+            "p": 0.1,
+            "inplace": false
+        }
+    },
+    {
         "name": "ViewBackward0118",
         "op": "ViewBackward0",
         "input_nodes": [
-            "AddBackward036"
+            "NativeDropoutBackward027"
         ],
         "output_nodes": [
             "AddmmBackward036"
@@ -51053,7 +51987,7 @@
             "NativeLayerNormBackward019"
         ],
         "output_nodes": [
-            "ViewBackward0122",
+            "NativeDropoutBackward028",
             "AddBackward040"
         ],
         "input_types": [
@@ -51084,10 +52018,44 @@
         ]
     },
     {
+        "name": "NativeDropoutBackward028",
+        "op": "NativeDropoutBackward0",
+        "input_nodes": [
+            "AddBackward039"
+        ],
+        "output_nodes": [
+            "ViewBackward0122"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "attrs": {
+            "p": 0.1,
+            "inplace": false
+        }
+    },
+    {
         "name": "ViewBackward0122",
         "op": "ViewBackward0",
         "input_nodes": [
-            "AddBackward039"
+            "NativeDropoutBackward028"
         ],
         "output_nodes": [
             "AddmmBackward038"
@@ -51514,7 +52482,7 @@
             "ViewBackward0125"
         ],
         "output_nodes": [
-            "SoftmaxBackward09"
+            "NativeDropoutBackward029"
         ],
         "input_types": [
             "torch.float32"
@@ -51540,13 +52508,13 @@
         ]
     },
     {
-        "name": "SoftmaxBackward09",
-        "op": "SoftmaxBackward0",
+        "name": "NativeDropoutBackward029",
+        "op": "NativeDropoutBackward0",
         "input_nodes": [
             "ExpandBackward037"
         ],
         "output_nodes": [
-            "WhereBackward09"
+            "SoftmaxBackward09"
         ],
         "input_types": [
             "torch.float32"
@@ -51574,6 +52542,38 @@
             "p": 0.1,
             "inplace": false
         }
+    },
+    {
+        "name": "SoftmaxBackward09",
+        "op": "SoftmaxBackward0",
+        "input_nodes": [
+            "NativeDropoutBackward029"
+        ],
+        "output_nodes": [
+            "WhereBackward09"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                12,
+                512,
+                512
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                12,
+                512,
+                512
+            ]
+        ]
     },
     {
         "name": "WhereBackward09",
@@ -52393,7 +53393,7 @@
         ],
         "output_nodes": [
             "AddBackward043",
-            "ViewBackward0131"
+            "NativeDropoutBackward030"
         ],
         "input_types": [
             "torch.float32"
@@ -52423,10 +53423,44 @@
         ]
     },
     {
+        "name": "NativeDropoutBackward030",
+        "op": "NativeDropoutBackward0",
+        "input_nodes": [
+            "AddBackward040"
+        ],
+        "output_nodes": [
+            "ViewBackward0131"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "attrs": {
+            "p": 0.1,
+            "inplace": false
+        }
+    },
+    {
         "name": "ViewBackward0131",
         "op": "ViewBackward0",
         "input_nodes": [
-            "AddBackward040"
+            "NativeDropoutBackward030"
         ],
         "output_nodes": [
             "AddmmBackward040"
@@ -53048,7 +54082,7 @@
             "NativeLayerNormBackward021"
         ],
         "output_nodes": [
-            "ViewBackward0135",
+            "NativeDropoutBackward031",
             "AddBackward044"
         ],
         "input_types": [
@@ -53079,10 +54113,44 @@
         ]
     },
     {
+        "name": "NativeDropoutBackward031",
+        "op": "NativeDropoutBackward0",
+        "input_nodes": [
+            "AddBackward043"
+        ],
+        "output_nodes": [
+            "ViewBackward0135"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "attrs": {
+            "p": 0.1,
+            "inplace": false
+        }
+    },
+    {
         "name": "ViewBackward0135",
         "op": "ViewBackward0",
         "input_nodes": [
-            "AddBackward043"
+            "NativeDropoutBackward031"
         ],
         "output_nodes": [
             "AddmmBackward042"
@@ -53509,7 +54577,7 @@
             "ViewBackward0138"
         ],
         "output_nodes": [
-            "SoftmaxBackward010"
+            "NativeDropoutBackward032"
         ],
         "input_types": [
             "torch.float32"
@@ -53535,13 +54603,13 @@
         ]
     },
     {
-        "name": "SoftmaxBackward010",
-        "op": "SoftmaxBackward0",
+        "name": "NativeDropoutBackward032",
+        "op": "NativeDropoutBackward0",
         "input_nodes": [
             "ExpandBackward041"
         ],
         "output_nodes": [
-            "WhereBackward010"
+            "SoftmaxBackward010"
         ],
         "input_types": [
             "torch.float32"
@@ -53569,6 +54637,38 @@
             "p": 0.1,
             "inplace": false
         }
+    },
+    {
+        "name": "SoftmaxBackward010",
+        "op": "SoftmaxBackward0",
+        "input_nodes": [
+            "NativeDropoutBackward032"
+        ],
+        "output_nodes": [
+            "WhereBackward010"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                12,
+                512,
+                512
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                12,
+                512,
+                512
+            ]
+        ]
     },
     {
         "name": "WhereBackward010",
@@ -54388,7 +55488,7 @@
         ],
         "output_nodes": [
             "AddBackward047",
-            "ViewBackward0144"
+            "NativeDropoutBackward033"
         ],
         "input_types": [
             "torch.float32"
@@ -54418,10 +55518,44 @@
         ]
     },
     {
+        "name": "NativeDropoutBackward033",
+        "op": "NativeDropoutBackward0",
+        "input_nodes": [
+            "AddBackward044"
+        ],
+        "output_nodes": [
+            "ViewBackward0144"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "attrs": {
+            "p": 0.1,
+            "inplace": false
+        }
+    },
+    {
         "name": "ViewBackward0144",
         "op": "ViewBackward0",
         "input_nodes": [
-            "AddBackward044"
+            "NativeDropoutBackward033"
         ],
         "output_nodes": [
             "AddmmBackward044"
@@ -55043,8 +56177,8 @@
             "NativeLayerNormBackward023"
         ],
         "output_nodes": [
-            "ViewBackward0148",
-            "AddBackward048"
+            "NativeDropoutBackward034",
+            "NativeDropoutBackward036"
         ],
         "input_types": [
             "torch.float32"
@@ -55074,10 +56208,44 @@
         ]
     },
     {
+        "name": "NativeDropoutBackward034",
+        "op": "NativeDropoutBackward0",
+        "input_nodes": [
+            "AddBackward047"
+        ],
+        "output_nodes": [
+            "ViewBackward0148"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "attrs": {
+            "p": 0.1,
+            "inplace": false
+        }
+    },
+    {
         "name": "ViewBackward0148",
         "op": "ViewBackward0",
         "input_nodes": [
-            "AddBackward047"
+            "NativeDropoutBackward034"
         ],
         "output_nodes": [
             "AddmmBackward046"
@@ -55504,7 +56672,7 @@
             "ViewBackward0151"
         ],
         "output_nodes": [
-            "SoftmaxBackward011"
+            "NativeDropoutBackward035"
         ],
         "input_types": [
             "torch.float32"
@@ -55530,13 +56698,13 @@
         ]
     },
     {
-        "name": "SoftmaxBackward011",
-        "op": "SoftmaxBackward0",
+        "name": "NativeDropoutBackward035",
+        "op": "NativeDropoutBackward0",
         "input_nodes": [
             "ExpandBackward045"
         ],
         "output_nodes": [
-            "WhereBackward011"
+            "SoftmaxBackward011"
         ],
         "input_types": [
             "torch.float32"
@@ -55564,6 +56732,38 @@
             "p": 0.1,
             "inplace": false
         }
+    },
+    {
+        "name": "SoftmaxBackward011",
+        "op": "SoftmaxBackward0",
+        "input_nodes": [
+            "NativeDropoutBackward035"
+        ],
+        "output_nodes": [
+            "WhereBackward011"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                12,
+                512,
+                512
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                12,
+                512,
+                512
+            ]
+        ]
     },
     {
         "name": "WhereBackward011",
@@ -56298,7 +57498,7 @@
             "ViewBackward0156"
         ],
         "output_nodes": [
-            "AddBackward048",
+            "NativeDropoutBackward036",
             "AccumulateGrad144",
             "AccumulateGrad145"
         ],
@@ -56375,11 +57575,45 @@
         "output_shapes": []
     },
     {
-        "name": "AddBackward048",
-        "op": "AddBackward0",
+        "name": "NativeDropoutBackward036",
+        "op": "NativeDropoutBackward0",
         "input_nodes": [
             "AddBackward047",
             "NativeLayerNormBackward024"
+        ],
+        "output_nodes": [
+            "AddBackward048"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                16,
+                512,
+                768
+            ]
+        ],
+        "attrs": {
+            "p": 0.1,
+            "inplace": false
+        }
+    },
+    {
+        "name": "AddBackward048",
+        "op": "AddBackward0",
+        "input_nodes": [
+            "NativeDropoutBackward036"
         ],
         "output_nodes": [
             "EmbeddingBackward01",
@@ -56410,11 +57644,7 @@
                 512,
                 768
             ]
-        ],
-        "attrs": {
-            "p": 0.1,
-            "inplace": false
-        }
+        ]
     },
     {
         "name": "EmbeddingBackward00",

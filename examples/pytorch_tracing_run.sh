@@ -40,5 +40,6 @@ python ../main.py \
     --sequence_length "$SEQUENCE_LENGTH" \
     --num_repeats "$NUM_REPEATS" \
     --num_gpus "$NUM_GPUS" \
+    --$PROFILING_MODE_1 \
     --$PROFILING_MODE_2
     # --pytorch_only_compute_workload \

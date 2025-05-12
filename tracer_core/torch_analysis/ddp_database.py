@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import torch
+import os
+import json
 import logging
+import torch
 from typing import Optional
 from torch.optim.optimizer import Optimizer
 from torch.nn.parallel import DistributedDataParallel as DDP
-from .torch_database import TorchDatabase
-from .profiling_timer import Timer
-import os
-import json
+from tracer_core.torch_analysis.torch_database import TorchDatabase
+from tracer_core.torch_analysis.profiling_timer import Timer
+
+
 
 class DDPTorchDatabase(TorchDatabase):
     """

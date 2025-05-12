@@ -28,22 +28,21 @@ _create_backward_graph()
        gradient function grad_fn through the registered hooks, including the shapes and data 
        types of tensors.
 """
-
 import json
+import sys
+import os
+import logging
 import torch
 import torch.fx
-import sys
-from torch.fx.node import Node, map_aggregate
-sys.path.append('/root/Echo-workload-tracer/tracer_core/torch_analysis')
-from shape_prop import ShapeProp, TensorMetadata, extract_tensor_metadata
-from typename import typename
-from graph_node import Node, NodeEngineer
-from transformers import PreTrainedModel
+from torch.fx.node import map_aggregate
+from tracer_core.torch_analysis.shape_prop import ShapeProp, TensorMetadata, extract_tensor_metadata
+from tracer_core.torch_analysis.typename import typename
+from tracer_core.torch_analysis.graph_node import NodeEngineer
 from torch.fx import symbolic_trace
+from transformers import PreTrainedModel
 from transformers.utils.fx import symbolic_trace as transformers_symbolic_trace
-import os
-from typing import List, Optional, Dict, Any, Union
-import logging
+from typing import List, Optional, Dict, Any
+
 sys.setrecursionlimit(1500)
 
 

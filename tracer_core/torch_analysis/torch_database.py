@@ -2,22 +2,15 @@ import json
 from typing import List, Dict, Any, Iterator
 import torch
 import torch.fx
-from torch.fx.node import Node, map_arg, map_aggregate
+from torch.fx.node import map_arg
 from torch.fx import symbolic_trace
 from torch.optim.optimizer import Optimizer
 from transformers.utils.fx import symbolic_trace as transformers_symbolic_trace
-# from .shape_prop import ShapeProp, TensorMetadata
-# from .typename import typename
-from . import Node
+from tracer_core.torch_analysis.graph_node import Node
 from transformers import PreTrainedModel
-# import time
-from .profiling_timer import Timer, make_dot
-# import torch.optim as optim
-# import torch.autograd.profiler as torch_profiler
-# from torch.fx.experimental.proxy_tensor import FakeTensor, make_fx
+from tracer_core.torch_analysis.profiling_timer import Timer, make_dot
 import os
 
-# self.logger.basicConfig(level=self.logger.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class TorchDatabase(
     torch.fx.Interpreter

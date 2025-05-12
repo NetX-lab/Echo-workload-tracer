@@ -181,3 +181,4 @@ echo_paper/
 .cursor-update/
 
 # file
+output/

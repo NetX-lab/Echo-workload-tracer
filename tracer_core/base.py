@@ -7,11 +7,9 @@ Base Tracer - Abstract base class for all framework-specific tracers.
 
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional, Union
-import os
 import logging
 import json
 import time
-import torch
 from datetime import datetime
 from utils import get_logger
 

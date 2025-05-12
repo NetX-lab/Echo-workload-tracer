@@ -51,7 +51,7 @@ The Echo Workload Tracer focuses on capturing runtime information and generating
 ./pytorch_tracing_run_huggingface.sh --model deepseek-ai/deepseek-coder-1.3b-base --model_source huggingface --batch_size 2 --sequence_length 256 --num_repeats 5 --num_gpus 1
 
 # Advanced usage (ddp mode)
-./pytorch_tracing_run_ddp.sh --model gpt2 --batch_size 1 --sequence_length 512 --num_gpus 2 --model_source local --bucket_cap_mb 10
+./pytorch_tracing_run_ddp.sh --model gpt2 --batch_size 1 --bucket_cap_mb 10 --sequence_length 512 --num_gpus 2 --model_source local
 
 ```
 
@@ -71,7 +71,7 @@ The Echo Workload Tracer focuses on capturing runtime information and generating
 - `--pytorch_ops_profiling`: Enable operations profiling for PyTorch workload
 - `--pytorch_graph_profiling`: Enable graph profiling for PyTorch workload
 - `--pytorch_ddp`: Enable PyTorch DistributedDataParallel (DDP) mode
-- `--pytorch_only_compute_workload`: Only trace the compute workload in training
+- `--bucket_cap_mb`: Communication bucket size used in DDP mode (default: 25)
 
 ## Output
 
